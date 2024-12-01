@@ -13,6 +13,7 @@ import java.util.ArrayList;
  * @author hieun
  */
 public class AccountBUS {
+   
     
     private final AccountDAO accountDAO = new AccountDAO();
     
@@ -46,5 +47,8 @@ public class AccountBUS {
     
     public boolean searchAccount(String username) { 
         return accountDAO.searchAccount(username); 
+    }
+    public boolean isUsernameDuplicate(String username) {
+        return accountDAO.isUsernameDuplicate(username); 
     }
 } 

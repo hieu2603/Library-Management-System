@@ -6,6 +6,7 @@ package GUI.Supplier;
 
 import BUS.SupplierBUS;
 import DTO.SupplierDTO;
+import helper.Validator;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
@@ -107,7 +108,59 @@ public class SupplierDialog extends javax.swing.JDialog {
         return new SupplierDTO(name, address, phone);
     }
     
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txt_name.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên");
+            return false;
+        } 
+        
+        if(!Validator.isWithinLength(txt_name.getText(), 30)) {
+            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 30 kí tự");
+            return false;
+        }
+        
+        if(supplierBUS.isNameDuplicate(txt_name.getText())){
+            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp đã có sẵn");
+            return false;
+        }
+        
+        if(Validator.isEmpty(txt_address.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập địa chỉ");
+            return false;
+        }        
+        
+        if(Validator.isEmpty(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn số điện thoại");
+            return false;
+        }
+        
+        if(!Validator.isWithinLength(txt_phone.getText(), 10)) {
+            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 10 kí tự");
+            return false;
+        }
+        
+        if(Validator.isPhoneNumber(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn phải nhập đúng định dạng số điện thoại");
+            return false;
+        }
+        
+        if(supplierBUS.isPhoneDuplicate(txt_name.getText())){
+            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp đã có sẵn");
+            return false;
+        }
+        
+        if(!Validator.isWithinLength(txt_address.getText(), 50)) {
+            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 50 kí tự");
+            return false;
+        }
+        
+        return true;
+    }
+    
     public void addEvent() {
+         if(!validateInputs()){
+            return;
+        }
         supplier = getNewSupplier();
         if(supplierBUS.createsupplier(supplier)) {
             JOptionPane.showMessageDialog(null, "Thêm nhà cung cấp thành công");

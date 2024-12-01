@@ -47,7 +47,12 @@ public class SupplierBUS {
         return supplierDAO.searchSupplier(keyword);
     }
     
-
-
+    public boolean isNameDuplicate(String name){
+        return supplierDAO.isNameDuplicate(name);
+    }
+    
+    public boolean isPhoneDuplicate(String name){
+        return supplierDAO.isPhoneDuplicate(name);
+    }
 
 }

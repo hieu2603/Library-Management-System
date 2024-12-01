@@ -243,5 +243,23 @@ public class AccountDAO {
         
         return account;
     }
+    
+    public static boolean isUsernameDuplicate(String username) {
+    String query = "SELECT 1 FROM account WHERE username = ? LIMIT 1";
+    
+    try (Connection conn = Database.getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        
+        ps.setString(1, username);
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next(); // Nếu có kết quả, username đã tồn tại.
+        }
+        
+    } catch (SQLException e) {
+        e.printStackTrace(); // Log lỗi nếu có
+    }
+    return false; // Trả về false nếu không tìm thấy username
+}
 }
 
