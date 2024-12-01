@@ -247,7 +247,7 @@ public class CategoryDialog extends javax.swing.JDialog {
 
     private void option_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option_updateActionPerformed
         if (jTable1.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào");
+            JOptionPane.showMessageDialog(null, "Bạn chưa chọn danh mục nào");
             return;
         }
         int index = jTable1.getSelectedRow();
