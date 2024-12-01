@@ -162,7 +162,7 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
     }
     
     public void viewTicketEvent() {
-        int returnTicket_id = Integer.parseInt(txt_id.getText());
+        int returnTicket_id = Integer.parseInt(txt_ticketId.getText());
         ReturnTicketDTO returnTicket = ReturnTicketBUS.getInstance().getByID(returnTicket_id);
         ReturnTicketDialog rtD = new ReturnTicketDialog(null, true, returnTicket, "view");
         rtD.setVisible(true);

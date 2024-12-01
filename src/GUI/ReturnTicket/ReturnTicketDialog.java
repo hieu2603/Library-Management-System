@@ -186,6 +186,18 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
         }
     }
     
+    public void addRowToTable(ReturnTicketDetailDTO detail) {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        BookDTO book = BookBUS.getInstance().getByISBN(detail.getIsbn());
+        tableModel.addRow(new Object[]{
+            detail.getIsbn(),
+            book.getTitle(),
+            detail.getBorrow_ticket_id(),
+            detail.getStatus(),
+            (detail.getDays_passed() == 0 ? "Đúng hạn" : "Trễ hạn " + detail.getDays_passed() + " ngày")
+        });
+    }
+    
     public void addBookEvent() {
         if(Validator.isEmpty(txt_member.getText())) {
             JOptionPane.showMessageDialog(this, "Bạn chưa chọn thành viên");
@@ -222,7 +234,8 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
         
         ReturnTicketDetailDTO returnDetail = new ReturnTicketDetailDTO(returnticket_id, borrowticket_id, isbn, "Nguyên vẹn", (int) days_passed);
         detailList.add(returnDetail);
-        loadDataToTable(detailList);
+        addRowToTable(returnDetail);
+//        loadDataToTable(detailList);
     }
     
     public ReturnTicketDTO getNewReturnTicket() {
