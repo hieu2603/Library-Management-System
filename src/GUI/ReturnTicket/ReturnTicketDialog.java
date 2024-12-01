@@ -135,11 +135,11 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "ISBN", "Tên sách", "Mã phiếu mượn", "Tình trạng"
+                "ISBN", "Tên sách", "Mã phiếu mượn", "Tình trạng", "Hạn trả"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -163,6 +163,7 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
         txt_status.setEnabled(false);
         
         txt_staff.setText(staff.getFullName());
+        txt_returnDate.setText(Formatter.getDate(returnDate));
         
         JComboBox comboBox = new JComboBox(statuses);
         TableColumn statusColumn = jTable1.getColumnModel().getColumn(3);
@@ -179,7 +180,8 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
                     i.getIsbn(),
                     book.getTitle(),
                     i.getBorrow_ticket_id(),
-                    i.getStatus()
+                    i.getStatus(),
+                    (i.getDays_passed()==0?"Đúng hạn":"Trễ hạn " + i.getDays_passed() + " ngày")
             });
         }
     }
@@ -191,6 +193,7 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
         }
         int borrowticket_id = 0;
         String isbn = "";
+        BorrowTicketDetailDTO borrowDetail = null;
         GetBorrowedBookDialog gbbDialog = new GetBorrowedBookDialog(null, true, member, borrowTicketList, borrowDetailList);
         gbbDialog.setVisible(true);
         try {
@@ -199,15 +202,26 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
             }
             borrowticket_id = gbbDialog.getSelectedId();
             isbn = gbbDialog.getSelectedISBN();
-            BorrowTicketDetailDTO detail = BorrowTicketDetailDAO.getInstance().getByTicketIdAndISBN(borrowticket_id, isbn);
-            borrowDetailList.remove(detail);
+            borrowDetail = BorrowTicketDetailDAO.getInstance().getByTicketIdAndISBN(borrowticket_id, isbn);
+            borrowDetailList.remove(borrowDetail);
 
         } catch (Exception ex) {
             
         }
         int returnticket_id = ReturnTicketDAO.getInstance().getLastID() + 1;
-        ReturnTicketDetailDTO detail = new ReturnTicketDetailDTO(returnticket_id, borrowticket_id, isbn, "Nguyên vẹn");
-        detailList.add(detail);
+        
+        long days_passed;
+        BorrowTicketDTO borrowTicket = BorrowTicketBUS.getInstance().getById(borrowDetail.getBorrow_ticket_id());
+        Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+        if(currentDate.before(borrowTicket.getDue_date())) {
+            days_passed = 0;
+        } else {
+            long differenceInMillis = currentDate.getTime() - borrowTicket.getDue_date().getTime();
+            days_passed = differenceInMillis / (24 * 60 * 60 * 1000);
+        }
+        
+        ReturnTicketDetailDTO returnDetail = new ReturnTicketDetailDTO(returnticket_id, borrowticket_id, isbn, "Nguyên vẹn", (int) days_passed);
+        detailList.add(returnDetail);
         loadDataToTable(detailList);
     }
     
@@ -365,11 +379,11 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "ISBN", "Tên sách", "Mã phiếu mượn", "Tình trạng"
+                "ISBN", "Tên sách", "Mã phiếu mượn", "Tình trạng", "Hạn trả"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -385,6 +399,7 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
             jTable1.getColumnModel().getColumn(1).setResizable(false);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
             jTable1.getColumnModel().getColumn(3).setResizable(false);
+            jTable1.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N

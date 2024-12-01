@@ -19,12 +19,20 @@ public class ReturnTicketBUS {
     private final ReturnTicketDAO returnTicketDAO = new ReturnTicketDAO();
     private final ReturnTicketDetailDAO detailDAO = new ReturnTicketDetailDAO();
     
+    public static ReturnTicketBUS getInstance() {
+        return new ReturnTicketBUS();
+    }
+    
     public ArrayList<ReturnTicketDTO> getAll() {
         return returnTicketDAO.getAll();
     }
     
     public ReturnTicketDTO getByID(int id) {
         return returnTicketDAO.getById(id);
+    }
+    
+    public ArrayList<ReturnTicketDTO> getByMemberIDToPenalty(int member_id) {
+        return returnTicketDAO.getByMemberIDToPenalty(member_id);
     }
     
     public boolean addWithDetail(ReturnTicketDTO borrowTicket, ArrayList<ReturnTicketDetailDTO> detailList) {

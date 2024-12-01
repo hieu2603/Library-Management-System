@@ -23,7 +23,7 @@ public class PenaltyTicketDetailDAO {
         try {
             Connection connection = Database.getConnection();
 
-            String query = "SELECT * FROM penaltyticket_detail WHERE penaltyticket_id = ?";
+            String query = "SELECT * FROM penaltyticket_detail WHERE penalty_ticket_id = ?";
 
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, id);
@@ -32,12 +32,13 @@ public class PenaltyTicketDetailDAO {
 
             while (rs.next()) {
                 int id1 = rs.getInt("id");
-                int penaltyticket_id = rs.getInt("penaltyticket_id");
+                int penaltyticket_id = rs.getInt("penalty_ticket_id");
                 int penalty_id = rs.getInt("penalty_id");
                 String isbn = rs.getString("isbn");
                 int fine = rs.getInt("fine");
+                int days_passed = rs.getInt("days_passed");
 
-                PenaltyTicketDetailDTO returnticket_detail = new PenaltyTicketDetailDTO(id1, penaltyticket_id, penalty_id, isbn, fine);
+                PenaltyTicketDetailDTO returnticket_detail = new PenaltyTicketDetailDTO(id1, penaltyticket_id, penalty_id, isbn, fine, days_passed);
 
                 list.add(returnticket_detail);
             }
@@ -50,4 +51,32 @@ public class PenaltyTicketDetailDAO {
 
         return list;
     }
+    
+    public int addList(ArrayList<PenaltyTicketDetailDTO> list) {
+        int result = 0;
+
+        try {
+            Connection connection = Database.getConnection();
+
+            for (PenaltyTicketDetailDTO i : list) {
+                String query = "INSERT INTO penaltyticket_detail (penalty_ticket_id, penalty_id, isbn, fine, days_passed) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement ps = connection.prepareStatement(query);
+                
+                ps.setInt(1, i.getPenaltyticket_id());
+                ps.setInt(2, i.getPenalty_id());
+                ps.setString(3, i.getIsbn());
+                ps.setInt(4, i.getFine());
+                ps.setInt(5, i.getDays_passed());
+                result = ps.executeUpdate();
+
+            }
+
+            Database.closeConnection(connection);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return result;
+    }
+    
 }

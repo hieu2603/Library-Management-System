@@ -3,11 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Administrator/Desktop/Library-Management-System/src/DTO/SupplierDTO.java</file>
-            <file>file:/C:/Users/Administrator/Desktop/Library-Management-System/src/DAO/AccountDAO.java</file>
-            <file>file:/C:/Users/Administrator/Desktop/Library-Management-System/src/BUS/SupplierBUS.java</file>
-            <file>file:/C:/Users/Administrator/Desktop/Library-Management-System/src/DAO/SupplierDAO.java</file>
-            <file>file:/C:/Users/Administrator/Desktop/Library-Management-System/src/BUS/AccountBUS.java</file>
+            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/ReturnTicket/ReturnTicketDialog.java</file>
+            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/PenaltyTicket/PenaltyTicketDialog.java</file>
         </group>
     </open-files>
 </project-private>

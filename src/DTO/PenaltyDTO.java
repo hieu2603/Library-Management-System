@@ -27,12 +27,12 @@ public class PenaltyDTO {
         this.name =  penalty_name;
     }
 
-    public int getAmount() {
+    public int getFine() {
         return fine;
     }
 
-    public void setAmount(int amount) {
-        this.fine = amount;
+    public void setFine(int fine) {
+        this.fine = fine;
     }
     
 }

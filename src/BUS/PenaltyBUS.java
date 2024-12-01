@@ -6,6 +6,37 @@ import java.util.ArrayList;
 
 public class PenaltyBUS {
     private final PenaltyDAO penaltyDAO = new PenaltyDAO();
+    
+    public static PenaltyBUS getInstance() {
+        return new PenaltyBUS();
+    }
+    
+    public int getFineFromStatus(String status) {
+        ArrayList<PenaltyDTO> penaltyList = getAll();
+        for(PenaltyDTO i : penaltyList) {
+            if(status.equals(i.getPenaltyName()))
+                return i.getFine();
+        }
+        return 0;
+    }
+    
+    public int getIdFromStatus(String status) {
+        ArrayList<PenaltyDTO> penaltyList = getAll();
+        for(PenaltyDTO i : penaltyList) {
+            if(status.equals(i.getPenaltyName()))
+                return i.getId();
+        }
+        return 0;
+    }
+    
+    public String getNameFromId(int id) {
+        ArrayList<PenaltyDTO> penaltyList = getAll();
+        for(PenaltyDTO i : penaltyList) {
+            if(id == i.getId())
+                return i.getPenaltyName();
+        }
+        return "";
+    }
 
     public boolean createPenalty(PenaltyDTO penalty) {
         return penaltyDAO.add(penalty) > 0;

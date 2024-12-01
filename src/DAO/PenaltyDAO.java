@@ -11,6 +11,10 @@ import java.util.ArrayList;
 
 
 public class PenaltyDAO {
+    
+    public static PenaltyDAO getInstance() {
+        return new PenaltyDAO();
+    }
 
     // Add Penalty
     public int add(PenaltyDTO penalty) {
@@ -19,11 +23,11 @@ public class PenaltyDAO {
         try {
             Connection connection = Database.getConnection();
 
-            String query = "INSERT INTO penalty (penalty_name, amount) VALUES (?,?)";
+            String query = "INSERT INTO penalty (penalty_name, fine) VALUES (?,?)";
             PreparedStatement ps = connection.prepareStatement(query);
 
             ps.setString(1, penalty.getPenaltyName());
-            ps.setDouble(2, penalty.getAmount());
+            ps.setDouble(2, penalty.getFine());
 
             result = ps.executeUpdate();
 
@@ -66,11 +70,11 @@ public class PenaltyDAO {
         try {
             Connection connection = Database.getConnection();
 
-            String query = "UPDATE penalty SET penalty_name = ?, amount = ? WHERE penalty_id = ?";
+            String query = "UPDATE penalty SET penalty_name = ?, fine = ? WHERE penalty_id = ?";
             PreparedStatement ps = connection.prepareStatement(query);
 
             ps.setString(1, penalty.getPenaltyName());
-            ps.setDouble(2, penalty.getAmount());
+            ps.setDouble(2, penalty.getFine());
 
             result = ps.executeUpdate();
 
@@ -99,9 +103,9 @@ public class PenaltyDAO {
             while (rs.next()) {
                 int id = rs.getInt("penalty_id");
                 String penalty_name = rs.getString("penalty_name");
-                int amount = rs.getInt("amount");
+                int fine = rs.getInt("fine");
 
-                PenaltyDTO penalty = new PenaltyDTO(id, penalty_name, amount);
+                PenaltyDTO penalty = new PenaltyDTO(id, penalty_name, fine);
 
                 list.add(penalty);
             }
@@ -131,9 +135,9 @@ public class PenaltyDAO {
             while (rs.next()) {
                 int id = rs.getInt("penalty_id");
                 String penalty_name = rs.getString("penalty_name");
-                int amount = rs.getInt("amount");
+                int fine = rs.getInt("fine");
 
-                PenaltyDTO penalty = new PenaltyDTO(id, penalty_name, amount);
+                PenaltyDTO penalty = new PenaltyDTO(id, penalty_name, fine);
 
                 list.add(penalty);
             }
@@ -163,9 +167,9 @@ public class PenaltyDAO {
             while (rs.next()) {
                 int id = rs.getInt("penalty_id");
                 String penalty_name = rs.getString("penalty_name");
-                int amount = rs.getInt("amount");
+                int fine = rs.getInt("fine");
 
-                PenaltyDTO penalty = new PenaltyDTO(id, penalty_name, amount);
+                PenaltyDTO penalty = new PenaltyDTO(id, penalty_name, fine);
 
                 list.add(penalty);
             }
@@ -194,11 +198,11 @@ public class PenaltyDAO {
 
             
             while (rs.next()) {
-                int penaltyId = rs.getInt("penalty_id"); 
-                String penaltyName = rs.getString("penalty_name");
-                int amount = rs.getInt("amount");
+                int id1 = rs.getInt("penalty_id");
+                String penalty_name = rs.getString("penalty_name");
+                int fine = rs.getInt("fine");
 
-                PenaltyDTO penalty = new PenaltyDTO(penaltyId, penaltyName, amount);
+                PenaltyDTO penalty = new PenaltyDTO(id1, penalty_name, fine);
                 list.add(penalty);
             }
 

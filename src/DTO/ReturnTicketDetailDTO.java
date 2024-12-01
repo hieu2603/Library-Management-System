@@ -7,20 +7,23 @@ public class ReturnTicketDetailDTO {
     private int borrow_ticket_id;
     private String isbn;
     private String status;
+    private int days_passed;
 
-    public ReturnTicketDetailDTO(int returnTicket_id, int borrow_ticket_id, String isbn, String status) {
+    public ReturnTicketDetailDTO(int returnTicket_id, int borrow_ticket_id, String isbn, String status, int days_passed) {
         this.returnTicket_id = returnTicket_id;
         this.borrow_ticket_id = borrow_ticket_id;
         this.isbn = isbn;
         this.status = status;
+        this.days_passed = days_passed;
     }
 
-    public ReturnTicketDetailDTO(int id, int returnTicket_id, int borrow_ticket_id, String isbn, String status) {
+    public ReturnTicketDetailDTO(int id, int returnTicket_id, int borrow_ticket_id, String isbn, String status, int days_passed) {
         this.id = id;
         this.returnTicket_id = returnTicket_id;
         this.borrow_ticket_id = borrow_ticket_id;
         this.isbn = isbn;
         this.status = status;
+        this.days_passed = days_passed;
     }
 
     public int getId() {
@@ -63,9 +66,12 @@ public class ReturnTicketDetailDTO {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "ReturnTicketDetailDTO{" + "id=" + id + ", returnTicket_id=" + returnTicket_id + ", borrow_ticket_id=" + borrow_ticket_id + ", isbn=" + isbn + ", status=" + status + '}';
+    public int getDays_passed() {
+        return days_passed;
+    }
+
+    public void setDays_passed(int days_passed) {
+        this.days_passed = days_passed;
     }
 
 }

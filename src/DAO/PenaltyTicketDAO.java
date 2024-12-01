@@ -11,6 +11,10 @@ import java.util.ArrayList;
 
 public class PenaltyTicketDAO {
 
+    public static PenaltyTicketDAO getInstance() {
+        return new PenaltyTicketDAO();
+    }
+    
     // Add PenaltyTicket
     public int add(PenaltyTicketDTO penaltyTicket) {
         int result = 0;
@@ -18,7 +22,7 @@ public class PenaltyTicketDAO {
         try {
             Connection connection = Database.getConnection();
 
-            String query = "INSERT INTO penaltyticket (member_id, staff_id, penalty_date, return_ticket_id, fine) VALUES (?, ?, ?, ?, ?)";
+            String query = "INSERT INTO penaltyticket (member_id, staff_id, penalty_date, return_ticket_id, total_fine) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(query);
 
             ps.setInt(1, penaltyTicket.getMember_id());
@@ -88,9 +92,41 @@ public class PenaltyTicketDAO {
 
         return result;
     }
+    
+    public PenaltyTicketDTO getById(int id) {
+        PenaltyTicketDTO penaltyTicket = null;
+        
+        try {
+            Connection connection = Database.getConnection();
+            
+            String query = "SELECT * FROM penaltyticket WHERE penalty_ticket_id = ?";
+            
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, id); 
+            
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                int id1 = rs.getInt("penalty_ticket_id");
+                int member_id = rs.getInt("member_id");
+                int staff_id = rs.getInt("staff_id");
+                Timestamp penalty_date = rs.getTimestamp("penalty_date");
+                int returnticket_id = rs.getInt("return_ticket_id");
+                int total_fine = rs.getInt("total_fine");
+                
+                penaltyTicket = new PenaltyTicketDTO(id1, member_id, staff_id, penalty_date, returnticket_id, total_fine);
+            }
+            
+            Database.closeConnection(connection); 
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        
+        return penaltyTicket;
+    }
 
     // Reset PenaltyTicket
-    public ArrayList<PenaltyTicketDTO> reset() {
+    public ArrayList<PenaltyTicketDTO> getAll() {
         ArrayList<PenaltyTicketDTO> list = new ArrayList<>();
 
         try {
@@ -121,6 +157,29 @@ public class PenaltyTicketDAO {
         }
 
         return list;
+    }
+    
+    public int getLastID() {
+        int result = 0;
+        
+        try {
+            Connection connection = Database.getConnection();
+
+            String query = "SELECT * FROM `penaltyticket` ORDER BY `penalty_ticket_id` DESC LIMIT 1";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                result = rs.getInt("penalty_ticket_id");
+            }
+
+            Database.closeConnection(connection);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return result;
     }
 
     // Filter by date

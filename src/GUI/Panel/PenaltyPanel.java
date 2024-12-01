@@ -4,13 +4,21 @@
  */
 package GUI.Panel;
 
+import BUS.MemberBUS;
 import BUS.PenaltyTicketBUS;
+import BUS.StaffBUS;
 import DTO.PenaltyTicketDTO;
 import GUI.Component.ManagementTable;
 import GUI.Component.MenuBar;
+import GUI.Component.MenuBarButton;
 import GUI.Main_Frame;
+import GUI.PenaltyTicket.PenaltyTicketDialog;
+import helper.Formatter;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,8 +32,10 @@ public class PenaltyPanel extends javax.swing.JPanel {
 
     ManagementTable tablePanel = new ManagementTable();
     MenuBar menuBar = new MenuBar();
+    MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
+    
     PenaltyTicketBUS penaltyTicketBUS = new PenaltyTicketBUS();
-    ArrayList<PenaltyTicketDTO> penaltyTicketList;
+    ArrayList<PenaltyTicketDTO> penaltyTicketList = penaltyTicketBUS.getAll();
     
     public PenaltyPanel(Main_Frame main) {
         this.main = main;
@@ -43,14 +53,30 @@ public class PenaltyPanel extends javax.swing.JPanel {
         //Quy định các cột
         String[] columnNames = {"Mã phiếu phạt", "Thành viên", "Nhân viên", "Ngày phạt", "Tổng phí"};
         tablePanel.table.setModel(new DefaultTableModel(null, columnNames));
-//        loadDataToTable(permissionList);
+        loadDataToTable(penaltyTicketList);
+        
+        menuBar.btn_refresh.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                refreshTable();
+            }
+        });
+        
+        menuBar.jToolBar1.add(addBtn);
+        addBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                addEvent();
+            }
+        });
         
         tablePanel.viewOption.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                viewEvent();
+                viewEvent();
             }
         });
+        
     }
     
     public void loadDataToTable(ArrayList<PenaltyTicketDTO> penaltyTicketList) {
@@ -59,12 +85,32 @@ public class PenaltyPanel extends javax.swing.JPanel {
         for (PenaltyTicketDTO i : penaltyTicketList) {
             tableModel.addRow(new Object[] {
                     i.getId(),
-                    i.getMember_id(),
-                    i.getStaff_id(),
-                    i.getPenalty_date(),
-                    i.getTotal_fine()
+                    MemberBUS.getInstance().getById(i.getMember_id()).getFull_name(),
+                    StaffBUS.getInstance().getById(i.getStaff_id()).getFullName(),
+                    Formatter.getDate(i.getPenalty_date()),
+                    Formatter.FormatVND(i.getTotal_fine())
             });
         }
+    }
+    
+    public void refreshTable() {
+        penaltyTicketList = penaltyTicketBUS.getAll();
+        loadDataToTable(penaltyTicketList);
+    }
+    
+    public void viewEvent() {
+        int index = tablePanel.table.getSelectedRow();
+        int id = (int) tablePanel.table.getValueAt(index, 0);
+        PenaltyTicketDTO penaltyTicket = penaltyTicketBUS.getByID(id);
+        PenaltyTicketDialog ptD = new PenaltyTicketDialog(null, true, penaltyTicket, "view");
+        ptD.setVisible(true);
+        refreshTable();
+    }
+    
+    public void addEvent() {
+        PenaltyTicketDialog ptD = new PenaltyTicketDialog(null, true, null, "add");
+        ptD.setVisible(true);
+        refreshTable();
     }
     
     @SuppressWarnings("unchecked")

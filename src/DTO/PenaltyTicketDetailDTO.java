@@ -14,20 +14,23 @@ public class PenaltyTicketDetailDTO {
     private int penalty_id;
     private String isbn;
     private int fine;
+    private int days_passed;
 
-    public PenaltyTicketDetailDTO(int penaltyticket_id, int penalty_id, String isbn, int fine) {
+    public PenaltyTicketDetailDTO(int penaltyticket_id, int penalty_id, String isbn, int fine, int days_passed) {
         this.penaltyticket_id = penaltyticket_id;
         this.penalty_id = penalty_id;
         this.isbn = isbn;
         this.fine = fine;
+        this.days_passed = days_passed;
     }
 
-    public PenaltyTicketDetailDTO(int id, int penaltyticket_id, int penalty_id, String isbn, int fine) {
+    public PenaltyTicketDetailDTO(int id, int penaltyticket_id, int penalty_id, String isbn, int fine, int days_passed) {
         this.id = id;
         this.penaltyticket_id = penaltyticket_id;
         this.penalty_id = penalty_id;
         this.isbn = isbn;
         this.fine = fine;
+        this.days_passed = days_passed;
     }
 
     public int getId() {
@@ -69,5 +72,18 @@ public class PenaltyTicketDetailDTO {
     public void setFine(int fine) {
         this.fine = fine;
     }
-    
+
+    public int getDays_passed() {
+        return days_passed;
+    }
+
+    public void setDays_passed(int days_passed) {
+        this.days_passed = days_passed;
+    }
+
+    @Override
+    public String toString() {
+        return "PenaltyTicketDetailDTO{" + "id=" + id + ", penaltyticket_id=" + penaltyticket_id + ", penalty_id=" + penalty_id + ", isbn=" + isbn + ", fine=" + fine + ", days_passed=" + days_passed + '}';
+    }
+
 }
