@@ -75,4 +75,9 @@ public class PenaltyTicketDTO {
         this.total_fine = total_fine;
     }
 
+    @Override
+    public String toString() {
+        return "PenaltyTicketDTO{" + "id=" + id + ", member_id=" + member_id + ", staff_id=" + staff_id + ", penalty_date=" + penalty_date + ", returnTicket_id=" + returnTicket_id + ", total_fine=" + total_fine + '}';
+    }
+
 }

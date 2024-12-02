@@ -19,4 +19,8 @@ public class PenaltyTicketDetailBUS {
         return penaltyTicketDetailDAO.getByPenaltyTicketId(id);
     }
     
+    public boolean addList(ArrayList<PenaltyTicketDetailDTO> detailList) {
+        return penaltyTicketDetailDAO.addList(detailList) != 0;
+    }
+    
 }

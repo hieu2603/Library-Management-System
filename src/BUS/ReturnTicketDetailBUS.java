@@ -16,8 +16,16 @@ public class ReturnTicketDetailBUS {
     
     private final ReturnTicketDetailDAO returnTicketDetailDAO = new ReturnTicketDetailDAO();
     
+    public static ReturnTicketDetailBUS getInstance() {
+        return new ReturnTicketDetailBUS();
+    }
+    
     public ArrayList<ReturnTicketDetailDTO> getByReturnTicketId(int id) {
         return returnTicketDetailDAO.getByReturnTicketId(id);
+    }
+    
+    public ArrayList<ReturnTicketDetailDTO> getByReturnTicketIdToPenalty(int id) {
+        return returnTicketDetailDAO.getByReturnTicketIdToPenalty(id);
     }
     
 }

@@ -2,10 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package GUI.Category;
+package GUI.ReturnTicket;
 
-import BUS.CategoryBUS;
-import DTO.CategoryDTO;
+import BUS.MemberBUS;
+import BUS.ReturnTicketBUS;
+import BUS.StaffBUS;
+import DTO.MemberDTO;
+import DTO.ReturnTicketDTO;
+import helper.Formatter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -16,23 +20,28 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Duc3m
  */
-public class CategoryDialog extends javax.swing.JDialog {
+public class GetReturnTicketDialog extends javax.swing.JDialog {
 
-    CategoryBUS categoryBUS = new CategoryBUS();
-    ArrayList<CategoryDTO> categoryList;
+    MemberDTO member;
+    ReturnTicketBUS returnTicketBUS = new ReturnTicketBUS();
+    ArrayList<ReturnTicketDTO> ticketList;
     public boolean choosen = false;
-
-    public CategoryDialog(java.awt.Frame parent, boolean modal) {
+    
+    MemberBUS memberBUS = new MemberBUS();
+    StaffBUS staffBUS = new StaffBUS();
+    
+    public GetReturnTicketDialog(java.awt.Frame parent, boolean modal, MemberDTO member) {
         super(parent, modal);
+        this.member = member;
         initComponents();
         customInit();
     }
-    
+
     public void customInit() {
         setLocationRelativeTo(null);
         
-        categoryList = categoryBUS.getAll();
-        loadDataToTable(categoryList);
+        ticketList = returnTicketBUS.getByMemberIDToPenalty(member.getMember_id());
+        loadTicketToTable(ticketList);
         
         btn_choose.addMouseListener(new MouseAdapter() {
             @Override
@@ -42,7 +51,7 @@ public class CategoryDialog extends javax.swing.JDialog {
                     choosen = true;
                     dispose();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Chưa chọn danh mục");
+                    JOptionPane.showMessageDialog(null, "Chưa chọn phiếu trả");
                 }
             }
         });
@@ -54,22 +63,20 @@ public class CategoryDialog extends javax.swing.JDialog {
             }
         });
         
+        loadTicketToTable(ticketList);
     }
     
-    public void loadDataToTable(ArrayList<CategoryDTO> categoryList) {
+    public void loadTicketToTable(ArrayList<ReturnTicketDTO> ticketList) {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
         tableModel.setRowCount(0);
-        for (CategoryDTO i : categoryList) {
+        for (ReturnTicketDTO i : ticketList) {
             tableModel.addRow(new Object[] {
                     i.getId(),
-                    i.getName()
+                    memberBUS.getById(i.getMember_id()).getFull_name(),
+                    staffBUS.getById(i.getStaff_id()).getFullName(),
+                    Formatter.getDate(i.getReturn_date())
             });
         }
-    }
-    
-    public void refreshTable() {
-        categoryList = categoryBUS.getAll();
-        loadDataToTable(categoryList);
     }
     
     public int getSelectedId() {
@@ -81,28 +88,25 @@ public class CategoryDialog extends javax.swing.JDialog {
         }
     }
     
-    public static CategoryDTO getCategory() {
-        CategoryDialog cD = new CategoryDialog(null, true);
-        cD.setVisible(true);
+    public static ReturnTicketDTO getReturnTicket(MemberDTO member) {
+        GetReturnTicketDialog gpD = new GetReturnTicketDialog(null, true, member);
+        gpD.setVisible(true);
         try {
-            if (cD.choosen == false) {
+            if (gpD.choosen == false) {
                 return null;
             }
-            int category_id = cD.getSelectedId();
-            return CategoryBUS.getInstance().getById(category_id);
+            int ticket_id = gpD.getSelectedId();
+            return ReturnTicketBUS.getInstance().getByID(ticket_id);
         } catch (Exception ex) {
 
         }
         return null;
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPopupMenu2 = new javax.swing.JPopupMenu();
-        option_add = new javax.swing.JMenuItem();
-        option_update = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -110,29 +114,11 @@ public class CategoryDialog extends javax.swing.JDialog {
         btn_choose = new javax.swing.JButton();
         btn_exit = new javax.swing.JButton();
 
-        option_add.setText("Thêm");
-        option_add.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        option_add.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                option_addActionPerformed(evt);
-            }
-        });
-        jPopupMenu2.add(option_add);
-
-        option_update.setText("Sửa");
-        option_update.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        option_update.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                option_updateActionPerformed(evt);
-            }
-        });
-        jPopupMenu2.add(option_update);
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("CHỌN DANH MỤC");
+        jLabel1.setText("CHỌN PHIẾU TRẢ");
         jLabel1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(212, 209, 216)));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -140,24 +126,31 @@ public class CategoryDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Mã", "Tên"
+                "Mã", "Thành viên", "Nhân viên", "Ngày trả"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setComponentPopupMenu(jPopupMenu2);
-        jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jTable1.setFocusable(false);
-        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTable1.getTableHeader().setResizingAllowed(false);
         jTable1.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setResizable(false);
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(10);
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
+            jTable1.getColumnModel().getColumn(3).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(30);
+        }
 
         btn_choose.setBackground(new java.awt.Color(21, 154, 32));
         btn_choose.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -178,18 +171,18 @@ public class CategoryDialog extends javax.swing.JDialog {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addGap(50, 50, 50)
                 .addComponent(btn_choose, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(126, 126, 126)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_exit, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(50, 50, 50))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(117, 117, 117)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(171, 171, 171)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -205,64 +198,10 @@ public class CategoryDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 374, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void option_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option_addActionPerformed
-        try {
-            String name;
-            name = JOptionPane.showInputDialog("Nhập tên cho danh mục mới");
-            if(name.equals(""))
-                return;
-            CategoryDTO newCategory = new CategoryDTO(name);
-            if(categoryBUS.add(newCategory)) {
-                JOptionPane.showMessageDialog(null, "Thêm danh mục mới thành công");
-                refreshTable();
-            }
-        } catch (Exception e) {
-            
-        }
-    }//GEN-LAST:event_option_addActionPerformed
-
-    private void option_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option_updateActionPerformed
-        if (jTable1.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Bạn chưa chọn danh mục nào");
-            return;
-        }
-        int index = jTable1.getSelectedRow();
-        int id = (int) jTable1.getValueAt(index, 0);
-        CategoryDTO category = categoryBUS.getById(id);
-        String newName;
-        newName = JOptionPane.showInputDialog("Nhập tên mới cho danh mục này");
-        if(newName.equals(""))
-                return;
-        category.setName(newName);
-        if (categoryBUS.update(category)) {
-            JOptionPane.showMessageDialog(null, "Sửa danh mục thành công");
-            refreshTable();
-        }
-    }//GEN-LAST:event_option_updateActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -270,10 +209,7 @@ public class CategoryDialog extends javax.swing.JDialog {
     private javax.swing.JButton btn_exit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JMenuItem option_add;
-    private javax.swing.JMenuItem option_update;
     // End of variables declaration//GEN-END:variables
 }
