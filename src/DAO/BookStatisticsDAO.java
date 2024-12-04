@@ -1,3 +1,4 @@
+// File: BookStatisticsDAO.java
 package DAO;
 
 import DTO.BookStatisticsDTO;
@@ -13,13 +14,14 @@ public class BookStatisticsDAO {
         int totalBooks = 0;
         int totalAvailableBooks = 0;
         int totalBorrowedBooks = 0;
-        int totalCategories = 0;
-        int totalPublishers = 0;
+        int totalBorrowTickets = 0;
+        double penaltyRevenue = 0.0;
+        int totalDamagedLostBooks = 0;
 
         try {
             Connection connection = Database.getConnection();
 
-            // Tổng số sách
+            // Thống kê tổng số sách
             String totalBooksQuery = "SELECT COUNT(*) AS totalBooks FROM book";
             PreparedStatement psTotalBooks = connection.prepareStatement(totalBooksQuery);
             ResultSet rsTotalBooks = psTotalBooks.executeQuery();
@@ -27,49 +29,60 @@ public class BookStatisticsDAO {
                 totalBooks = rsTotalBooks.getInt("totalBooks");
             }
 
-            // Số sách có sẵn
-            String availableBooksQuery = "SELECT COUNT(*) AS totalAvailable FROM bookitem WHERE status = 'Có sẵn'";
-            PreparedStatement psAvailableBooks = connection.prepareStatement(availableBooksQuery);
-            ResultSet rsAvailableBooks = psAvailableBooks.executeQuery();
-            if (rsAvailableBooks.next()) {
-                totalAvailableBooks = rsAvailableBooks.getInt("totalAvailable");
+            // Thống kê sách có sẵn
+            String totalAvailableBooksQuery = "SELECT COUNT(*) AS totalAvailableBooks FROM bookitem WHERE status = 'Có sẵn'";
+            PreparedStatement psTotalAvailableBooks = connection.prepareStatement(totalAvailableBooksQuery);
+            ResultSet rsTotalAvailableBooks = psTotalAvailableBooks.executeQuery();
+            if (rsTotalAvailableBooks.next()) {
+                totalAvailableBooks = rsTotalAvailableBooks.getInt("totalAvailableBooks");
             }
 
-            // Số sách đang được mượn
-            String borrowedBooksQuery = "SELECT COUNT(*) AS totalBorrowed FROM bookitem WHERE status = 'Đang mượn'";
-            PreparedStatement psBorrowedBooks = connection.prepareStatement(borrowedBooksQuery);
-            ResultSet rsBorrowedBooks = psBorrowedBooks.executeQuery();
-            if (rsBorrowedBooks.next()) {
-                totalBorrowedBooks = rsBorrowedBooks.getInt("totalBorrowed");
+            // Thống kê tổng số sách đang mượn
+            String totalBorrowedBooksQuery = "SELECT COUNT(*) AS totalBorrowedBooks FROM bookitem WHERE status = 'Đang mượn'";
+            PreparedStatement psTotalBorrowedBooks = connection.prepareStatement(totalBorrowedBooksQuery);
+            ResultSet rsTotalBorrowedBooks = psTotalBorrowedBooks.executeQuery();
+            if (rsTotalBorrowedBooks.next()) {
+                totalBorrowedBooks = rsTotalBorrowedBooks.getInt("totalBorrowedBooks");
             }
 
-            // Tổng số danh mục
-            String categoriesQuery = "SELECT COUNT(*) AS totalCategories FROM category";
-            PreparedStatement psCategories = connection.prepareStatement(categoriesQuery);
-            ResultSet rsCategories = psCategories.executeQuery();
-            if (rsCategories.next()) {
-                totalCategories = rsCategories.getInt("totalCategories");
+            // Thống kê tổng số phiếu mượn
+            String totalBorrowTicketsQuery = "SELECT COUNT(*) AS totalBorrowTickets FROM borrowticket";
+            PreparedStatement psTotalBorrowTickets = connection.prepareStatement(totalBorrowTicketsQuery);
+            ResultSet rsTotalBorrowTickets = psTotalBorrowTickets.executeQuery();
+            if (rsTotalBorrowTickets.next()) {
+                totalBorrowTickets = rsTotalBorrowTickets.getInt("totalBorrowTickets");
             }
 
-            // Tổng số nhà xuất bản
-            String publishersQuery = "SELECT COUNT(*) AS totalPublishers FROM publisher";
-            PreparedStatement psPublishers = connection.prepareStatement(publishersQuery);
-            ResultSet rsPublishers = psPublishers.executeQuery();
-            if (rsPublishers.next()) {
-                totalPublishers = rsPublishers.getInt("totalPublishers");
+            // Thống kê doanh thu từ phiếu phạt
+            String penaltyRevenueQuery = "SELECT SUM(total_fine) AS totalPenalty FROM penaltyticket";
+            PreparedStatement psPenaltyRevenue = connection.prepareStatement(penaltyRevenueQuery);
+            ResultSet rsPenaltyRevenue = psPenaltyRevenue.executeQuery();
+            if (rsPenaltyRevenue.next()) {
+                penaltyRevenue = rsPenaltyRevenue.getDouble("totalPenalty");
+            }
+
+            // Thống kê số sách hư hỏng hoặc mất
+            String damagedLostBooksQuery = "SELECT COUNT(*) AS totalDamagedLostBooks FROM bookitem WHERE status IN ('Hư hỏng', 'Mất')";
+            PreparedStatement psDamagedLostBooks = connection.prepareStatement(damagedLostBooksQuery);
+            ResultSet rsDamagedLostBooks = psDamagedLostBooks.executeQuery();
+            if (rsDamagedLostBooks.next()) {
+                totalDamagedLostBooks = rsDamagedLostBooks.getInt("totalDamagedLostBooks");
             }
 
             Database.closeConnection(connection);
+
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Error fetching book statistics: " + e.getMessage());
+            return null;
         }
 
         return new BookStatisticsDTO(
             totalBooks,
             totalAvailableBooks,
             totalBorrowedBooks,
-            totalCategories,
-            totalPublishers
+            totalBorrowTickets,
+            penaltyRevenue,
+            totalDamagedLostBooks
         );
     }
 }
