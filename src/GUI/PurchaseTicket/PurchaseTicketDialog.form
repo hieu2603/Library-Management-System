@@ -445,6 +445,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Th&#xea;m s&#xe1;ch"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_addBookActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
