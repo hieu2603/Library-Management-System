@@ -6,6 +6,7 @@ package GUI.Panel;
 
 import BUS.AccountBUS;
 import BUS.PermissionBUS;
+import BUS.StaffBUS;
 import DTO.AccountDTO;
 import GUI.Account.AccountDialog;
 import GUI.Component.ManagementTable;
@@ -15,6 +16,10 @@ import GUI.Main_Frame;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -29,13 +34,16 @@ public class AccountPanel extends javax.swing.JPanel {
 
     Main_Frame main;
     
+    String[] searchTypes = {"Tất cả", "Mã tài khoản", "Tên nhân viên", "Tên tài khoản", "Nhóm quyền", "Trạng thái"};
+    
     ManagementTable tablePanel = new ManagementTable();
-    MenuBar menuBar = new MenuBar();
+    MenuBar menuBar = new MenuBar(searchTypes);
     MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
     
     AccountBUS accountBUS = new AccountBUS();
     PermissionBUS permissionBUS = new PermissionBUS();
-    ArrayList<AccountDTO> accountList = accountBUS.getAllAccount();
+    StaffBUS staffBUS = new StaffBUS();
+    ArrayList<AccountDTO> accountList = accountBUS.getAll();
     
     public AccountPanel(Main_Frame main) {
         this.main = main;
@@ -51,7 +59,7 @@ public class AccountPanel extends javax.swing.JPanel {
         jLayeredPane1.add(tablePanel, Integer.valueOf(100));
         
         //Quy định các cột
-        String[] columnNames = {"Mã tài khoản", "Tên tài khoản", "Nhóm quyền", "Trạng thái"};
+        String[] columnNames = {"Mã tài khoản", "Tên nhân viên", "Tên tài khoản", "Nhóm quyền", "Trạng thái"};
         tablePanel.table.setModel(new DefaultTableModel(columnNames, 0));
         loadDataToTable(accountList);
         
@@ -73,6 +81,21 @@ public class AccountPanel extends javax.swing.JPanel {
                 viewEvent();
             }
         });
+        
+        menuBar.txt_search.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                searchEvent();
+            }
+        });
+        
+        menuBar.cbx_type.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                searchEvent();
+            }
+        });
+        
     }
     
     public void loadDataToTable(ArrayList<AccountDTO> accountList) {
@@ -81,11 +104,18 @@ public class AccountPanel extends javax.swing.JPanel {
         for (AccountDTO i : accountList) {
             tableModel.addRow(new Object[] {
                     i.getId(),
+                    staffBUS.getNameByID(i.getStaff_id()),
                     i.getUsername(),
                     permissionBUS.getById(i.getPermission_id()).getName(),
                     i.getStatus()
             });
         }
+    }
+    
+    public void searchEvent() {
+        String searchText = menuBar.txt_search.getText();
+        String type = (String) menuBar.cbx_type.getSelectedItem();
+        loadDataToTable(accountBUS.search(searchText, type));
     }
     
     public void viewEvent() {
@@ -94,14 +124,14 @@ public class AccountPanel extends javax.swing.JPanel {
         AccountDTO account = accountBUS.getById(id);
         AccountDialog aD = new AccountDialog(null, true, account, "view");
         aD.setVisible(true);
-        accountList = accountBUS.getAllAccount();
+        accountList = accountBUS.getAll();
         loadDataToTable(accountList);
     }
     
     public void addEvent() {
         AccountDialog aD = new AccountDialog(null, true, null, "add");
         aD.setVisible(true);
-        accountList = accountBUS.getAllAccount();
+        accountList = accountBUS.getAll();
         loadDataToTable(accountList);
     }
     

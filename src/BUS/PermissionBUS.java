@@ -31,6 +31,10 @@ public class PermissionBUS {
         return permissionDAO.getById(id);
     }
     
+    public String getNameByID(int id) {
+        return getById(id).getName();
+    }
+    
     public boolean add(PermissionDTO permission, ArrayList<PermissionDetailDTO> pdList) {
         if(permissionDAO.add(permission) != 0) {
             permissionDetailDAO.add(pdList);
@@ -64,6 +68,37 @@ public class PermissionBUS {
                 if(i.getAction().equals(action))
                     return true;
         return false;
+    }
+    
+    public ArrayList<PermissionDTO> search(String text, String type) {
+        ArrayList<PermissionDTO> result = new ArrayList<>();
+        text = text.toLowerCase();
+        switch(type){
+            case "Tất cả" -> {
+                for(PermissionDTO i : getAll()) {
+                    if(
+                            Integer.toString(i.getId()).contains(text)
+                            || i.getName().toLowerCase().contains(text)
+                            )
+                        result.add(i);
+                }
+            }
+            case "Mã nhóm quyền" -> {
+                for(PermissionDTO i : getAll()) {
+                    if(Integer.toString(i.getId()).contains(text))
+                        result.add(i);
+                }
+            }
+            case "Tên nhóm quyền" -> {
+                for(PermissionDTO i : getAll()) {
+                    if(i.getName().toLowerCase().contains(text))
+                        result.add(i);
+                }
+            }
+             default -> throw new AssertionError();
+        }
+        
+        return result;
     }
     
 }

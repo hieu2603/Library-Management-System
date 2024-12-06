@@ -64,7 +64,7 @@ public class SupplierDialog extends javax.swing.JDialog {
     }
     
     public void initViewMode(){
-        txt_id.setText(supplier.getSupplier_id() + "");
+        txt_id.setText(supplier.getId() + "");
         txt_name.setText(supplier.getName());
         txt_address.setText(supplier.getAddress());
         txt_phone.setText(supplier.getPhone());

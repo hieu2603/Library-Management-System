@@ -60,7 +60,7 @@ public class ActionOnGUI {
             for (T item : list) {
                 MemberDTO member = (MemberDTO) item;
                 Object[] rowData = new Object[] {
-                        member.getMember_id(),
+                        member.getId(),
                         member.getFull_name(),
                         member.getPhone(),
                         member.getAddress(),
@@ -75,7 +75,7 @@ public class ActionOnGUI {
             for (T item : list) {
                 SupplierDTO supplier = (SupplierDTO) item;
                 Object[] rowData = new Object[] {
-                        supplier.getSupplier_id(),
+                        supplier.getId(),
                         supplier.getName(),
                         supplier.getAddress(),
                         supplier.getPhone(), };

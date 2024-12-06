@@ -57,7 +57,7 @@ public class GetBookItemDialog extends javax.swing.JDialog {
             }
         });
         
-        bookList = bookBUS.getAllBook();
+        bookList = bookBUS.getAll();
         loadBookToTable(bookList);
         
     }

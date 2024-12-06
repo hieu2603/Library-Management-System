@@ -181,7 +181,7 @@ public class BorrowTicketDialog extends javax.swing.JDialog {
     
     public BorrowTicketDTO getNewBorrowTicket() {
         int staff_id = staff.getId();
-        int member_id = member.getMember_id();
+        int member_id = member.getId();
         String status = "1";
         
         return new BorrowTicketDTO(staff_id, member_id, borrow_date, due_date, status);

@@ -31,7 +31,7 @@ public class GetBookDialog extends javax.swing.JDialog {
     public void customInit() {
         setLocationRelativeTo(null);
         
-        bookList = bookBUS.getAllBook();
+        bookList = bookBUS.getAll();
         loadDataToTable(bookList);
         
         btn_choose.addMouseListener(new MouseAdapter() {
