@@ -32,7 +32,7 @@ public class SupplierDTO {
 
     }
 
-    public int getSupplier_id() {
+    public int getId() {
         return supplier_id;
     }
 

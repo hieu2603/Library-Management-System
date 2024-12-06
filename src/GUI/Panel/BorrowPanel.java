@@ -17,6 +17,10 @@ import helper.Formatter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -29,9 +33,11 @@ import javax.swing.table.DefaultTableModel;
 public class BorrowPanel extends javax.swing.JPanel {
     
     Main_Frame main;
+    
+    String[] searchTypes = {"Tất cả", "Mã phiếu mượn", "Nhân viên", "Thành viên", "Trạng thái"};
 
     ManagementTable tablePanel = new ManagementTable();
-    MenuBar menuBar = new MenuBar();
+    MenuBar menuBar = new MenuBar(searchTypes);
     MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
     
     BorrowTicketBUS borrowTicketBUS = new BorrowTicketBUS();
@@ -69,6 +75,21 @@ public class BorrowPanel extends javax.swing.JPanel {
                 viewEvent();
             }
         });
+        
+        menuBar.txt_search.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                searchEvent();
+            }
+        });
+        
+        menuBar.cbx_type.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                searchEvent();
+            }
+        });
+        
     }
     
     public void loadDataToTable(ArrayList<BorrowTicketDTO> borrowTicketList) {
@@ -84,6 +105,12 @@ public class BorrowPanel extends javax.swing.JPanel {
                     i.getStatus()
             });
         }
+    }
+    
+    public void searchEvent() {
+        String searchText = menuBar.txt_search.getText();
+        String type = (String) menuBar.cbx_type.getSelectedItem();
+        loadDataToTable(borrowTicketBUS.search(searchText, type));
     }
     
     public void refreshTable() {

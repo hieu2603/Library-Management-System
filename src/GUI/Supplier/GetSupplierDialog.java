@@ -31,7 +31,7 @@ public class GetSupplierDialog extends javax.swing.JDialog {
     public void customInit() {
         setLocationRelativeTo(null);
         
-        supplierList = supplierBUS.getAllsupplier();
+        supplierList = supplierBUS.getAll();
         loadDataToTable(supplierList);
         
         btn_choose.addMouseListener(new MouseAdapter() {
@@ -61,7 +61,7 @@ public class GetSupplierDialog extends javax.swing.JDialog {
         tableModel.setRowCount(0);
         for (SupplierDTO i : supplierList) {
             tableModel.addRow(new Object[] {
-                    i.getSupplier_id(),
+                    i.getId(),
                     i.getName()
             });
         }

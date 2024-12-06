@@ -42,7 +42,7 @@ public class SupplierDAO {
             ps.setString(1, supplier.getName());
             ps.setString(2, supplier.getAddress());
             ps.setString(3, supplier.getPhone());
-            ps.setInt(4, supplier.getSupplier_id());
+            ps.setInt(4, supplier.getId());
 
             
             result = ps.executeUpdate(); 

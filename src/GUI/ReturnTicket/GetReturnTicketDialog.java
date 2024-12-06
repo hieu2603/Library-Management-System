@@ -40,7 +40,7 @@ public class GetReturnTicketDialog extends javax.swing.JDialog {
     public void customInit() {
         setLocationRelativeTo(null);
         
-        ticketList = returnTicketBUS.getByMemberIDToPenalty(member.getMember_id());
+        ticketList = returnTicketBUS.getByMemberIDToPenalty(member.getId());
         loadTicketToTable(ticketList);
         
         btn_choose.addMouseListener(new MouseAdapter() {

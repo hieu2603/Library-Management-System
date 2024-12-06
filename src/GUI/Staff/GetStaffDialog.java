@@ -31,7 +31,7 @@ public class GetStaffDialog extends javax.swing.JDialog {
     public void customInit() {
         setLocationRelativeTo(null);
         
-        staffList = staffBUS.getAllStaff();
+        staffList = staffBUS.getAll();
         loadDataToTable(staffList);
         
         btn_choose.addMouseListener(new MouseAdapter() {

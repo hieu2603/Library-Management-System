@@ -255,8 +255,10 @@ public class CategoryDialog extends javax.swing.JDialog {
         CategoryDTO category = categoryBUS.getById(id);
         String newName;
         newName = JOptionPane.showInputDialog("Nhập tên mới cho danh mục này");
+        if(newName == null)
+            return;
         if(newName.equals(""))
-                return;
+            return;
         category.setName(newName);
         if (categoryBUS.update(category)) {
             JOptionPane.showMessageDialog(null, "Sửa danh mục thành công");

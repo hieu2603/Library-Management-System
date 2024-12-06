@@ -14,6 +14,10 @@ import GUI.Supplier.SupplierDialog;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -27,13 +31,15 @@ import javax.swing.table.DefaultTableModel;
 public class SupplierPanel extends javax.swing.JPanel {
     
     Main_Frame main;
+    
+    String[] searchTypes = {"Tất cả", "Mã nhà cung cấp", "Tên", "Địa chỉ", "Số điện thoại"};
 
     ManagementTable tablePanel = new ManagementTable();
     MenuBar menuBar = new MenuBar();
     MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
     
     SupplierBUS supplierBUS = new SupplierBUS();
-    ArrayList<SupplierDTO> supplierList = supplierBUS.getAllsupplier();
+    ArrayList<SupplierDTO> supplierList = supplierBUS.getAll();
     
     public SupplierPanel(Main_Frame main) {
         this.main = main;
@@ -79,6 +85,21 @@ public class SupplierPanel extends javax.swing.JPanel {
                 viewEvent();
             }
         });
+        
+        menuBar.txt_search.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                searchEvent();
+            }
+        });
+        
+        menuBar.cbx_type.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                searchEvent();
+            }
+        });
+        
     }
     
     public void loadDataToTable(ArrayList<SupplierDTO> supplierList) {
@@ -86,7 +107,7 @@ public class SupplierPanel extends javax.swing.JPanel {
         tableModel.setRowCount(0);
         for (SupplierDTO i : supplierList) {
             tableModel.addRow(new Object[] {
-                    i.getSupplier_id(),
+                    i.getId(),
                     i.getName(),
                     i.getAddress(),
                     i.getPhone()
@@ -94,8 +115,14 @@ public class SupplierPanel extends javax.swing.JPanel {
         }
     }
     
+    public void searchEvent() {
+        String searchText = menuBar.txt_search.getText();
+        String type = (String) menuBar.cbx_type.getSelectedItem();
+        loadDataToTable(supplierBUS.search(searchText, type));
+    }
+    
     public void refreshTable() {
-        supplierList = supplierBUS.getAllsupplier();
+        supplierList = supplierBUS.getAll();
         loadDataToTable(supplierList);
     }
     

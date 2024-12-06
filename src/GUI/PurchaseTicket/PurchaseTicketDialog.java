@@ -216,7 +216,7 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
     }
 
     public PurchaseTicketDTO getNewPurchaseTicket() {
-        int supplier_id = supplier.getSupplier_id();
+        int supplier_id = supplier.getId();
         int staff_id = staff.getId();
         Timestamp purchase_date = new Timestamp(System.currentTimeMillis());
         String status = "1";
