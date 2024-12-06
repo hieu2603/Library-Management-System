@@ -73,7 +73,7 @@ public class MemberDialog extends javax.swing.JDialog {
     }
     
     public void initViewMode() {
-        txt_id.setText(member.getMember_id() + "");
+        txt_id.setText(member.getId() + "");
         txt_name.setText(member.getFull_name());
         txt_address.setText(member.getAddress());
         txt_date.setText(Formatter.getDate(member.getMembership_date()));

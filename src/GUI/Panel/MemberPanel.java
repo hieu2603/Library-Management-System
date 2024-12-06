@@ -15,6 +15,10 @@ import helper.Formatter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -29,12 +33,14 @@ public class MemberPanel extends javax.swing.JPanel {
 
     Main_Frame main;
     
+    String[] searchTypes = {"Tất cả", "Mã thành viên", "Họ tên", "Số điện thoại", "Địa chỉ", "Trạng thái"};
+    
     ManagementTable tablePanel = new ManagementTable();
-    MenuBar menuBar = new MenuBar();
+    MenuBar menuBar = new MenuBar(searchTypes);
     MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
     
     MemberBUS memberBUS = new MemberBUS();
-    ArrayList<MemberDTO> memberList = memberBUS.getAllMember();
+    ArrayList<MemberDTO> memberList = memberBUS.getAll();
     
     public MemberPanel(Main_Frame main) {
         this.main = main;
@@ -79,6 +85,21 @@ public class MemberPanel extends javax.swing.JPanel {
                 viewEvent();
             }
         });
+        
+        menuBar.txt_search.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                searchEvent();
+            }
+        });
+        
+        menuBar.cbx_type.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                searchEvent();
+            }
+        });
+        
     }
     
     public void loadDataToTable(ArrayList<MemberDTO> memberList) {
@@ -86,7 +107,7 @@ public class MemberPanel extends javax.swing.JPanel {
         tableModel.setRowCount(0);
         for (MemberDTO i : memberList) {
             tableModel.addRow(new Object[] {
-                    i.getMember_id(),
+                    i.getId(),
                     i.getFull_name(),
                     i.getPhone(),
                     i.getAddress(),
@@ -96,8 +117,14 @@ public class MemberPanel extends javax.swing.JPanel {
         }
     }
     
+    public void searchEvent() {
+        String searchText = menuBar.txt_search.getText();
+        String type = (String) menuBar.cbx_type.getSelectedItem();
+        loadDataToTable(memberBUS.search(searchText, type));
+    }
+    
     public void refreshTable() {
-        memberList = memberBUS.getAllMember();
+        memberList = memberBUS.getAll();
         loadDataToTable(memberList);
     }
     

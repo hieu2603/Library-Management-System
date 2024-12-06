@@ -51,7 +51,7 @@ public class MemberDAO {
             ps.setTimestamp(5, member.getMembership_date());
             ps.setString(6, member.getStatus());
             ps.setInt(7, member.getViolationCount());
-            ps.setInt(8, member.getMember_id());
+            ps.setInt(8, member.getId());
 
             result = ps.executeUpdate();
             Database.closeConnection(conn);

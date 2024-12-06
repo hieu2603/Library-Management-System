@@ -16,6 +16,10 @@ import GUI.Main_Frame;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -32,15 +36,17 @@ import javax.swing.table.TableColumn;
 public class BookPanel extends javax.swing.JPanel {
     
     Main_Frame main;
+    
+    String[] searchTypes = {"Tất cả", "Mã sách", "Tên sách", "Tác giả", "Nhà xuất bản", "Năm xuất bản", "Thể loại"};
 
     ManagementTable tablePanel = new ManagementTable();
-    MenuBar menuBar = new MenuBar();
+    MenuBar menuBar = new MenuBar(searchTypes);
     MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
     
     BookBUS bookBUS = new BookBUS();
     CategoryBUS categoryBUS = new CategoryBUS();
     PublisherBUS publisherBUS = new PublisherBUS();
-    ArrayList<BookDTO> bookList = new BookBUS().getAllBook();
+    ArrayList<BookDTO> bookList = new BookBUS().getAll();
     
     public BookPanel(Main_Frame main) {
         this.main = main;
@@ -85,6 +91,21 @@ public class BookPanel extends javax.swing.JPanel {
                 viewEvent();
             }
         });
+        
+        menuBar.txt_search.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                searchEvent();
+            }
+        });
+        
+        menuBar.cbx_type.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                searchEvent();
+            }
+        });
+        
     }
     
     public void loadDataToTable(ArrayList<BookDTO> bookList) {
@@ -103,8 +124,14 @@ public class BookPanel extends javax.swing.JPanel {
         }
     }
     
+    public void searchEvent() {
+        String searchText = menuBar.txt_search.getText();
+        String type = (String) menuBar.cbx_type.getSelectedItem();
+        loadDataToTable(bookBUS.search(searchText, type));
+    }
+    
     public void refreshTable() {
-        bookList = bookBUS.getAllBook();
+        bookList = bookBUS.getAll();
         loadDataToTable(bookList);
     }
     

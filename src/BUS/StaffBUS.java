@@ -36,11 +36,75 @@ public class StaffBUS {
         return staffDAO.getById(id);
     }
     
+    public String getNameByID(int id) {
+        return staffDAO.getById(id).getFullName();
+    }
+    
     public ArrayList<StaffDTO> getByStatus(int status) {
         return staffDAO.getByStatus(status);
     }
 
-    public ArrayList<StaffDTO> getAllStaff() {
+    public ArrayList<StaffDTO> getAll() {
         return staffDAO.getAll();
     }
+    
+    public ArrayList<StaffDTO> search(String text, String type) {
+        ArrayList<StaffDTO> result = new ArrayList<>();
+        text = text.toLowerCase();
+        switch(type){
+            case "Tất cả" -> {
+                for(StaffDTO i : getAll()) {
+                    if(
+                            Integer.toString(i.getId()).contains(text)
+                            || i.getFullName().toLowerCase().contains(text)
+                            || i.getEmail().toLowerCase().contains(text)
+                            || i.getPhone().contains(text)
+                            || i.getAddress().toLowerCase().contains(text)
+                            || i.getStatus().toLowerCase().contains(text)
+                            )
+                        result.add(i);
+                }
+            }
+            case "Mã nhân viên" -> {
+                for(StaffDTO i : getAll()) {
+                    if(Integer.toString(i.getId()).contains(text))
+                        result.add(i);
+                }
+            }
+            case "Họ tên" -> {
+                for(StaffDTO i : getAll()) {
+                    if(i.getFullName().toLowerCase().contains(text))
+                        result.add(i);
+                }
+            }
+            case "Email" -> {
+                for(StaffDTO i : getAll()) {
+                    if(i.getEmail().toLowerCase().contains(text))
+                        result.add(i);
+                }
+            }
+            case "Số điện thoại" -> {
+                for(StaffDTO i : getAll()) {
+                    if(i.getPhone().contains(text))
+                        result.add(i);
+                }
+            }
+            case "Địa chỉ" -> {
+                for(StaffDTO i : getAll()) {
+                    if(i.getAddress().toLowerCase().contains(text))
+                        result.add(i);
+                }
+            }
+            case "Trạng thái" -> {
+                for(StaffDTO i : getAll()) {
+                    if(i.getStatus().toLowerCase().contains(text))
+                        result.add(i);
+                }
+            }
+             default -> throw new AssertionError();
+        }
+        
+        return result;
+    }
+    
 }

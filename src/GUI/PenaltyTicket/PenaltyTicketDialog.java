@@ -215,7 +215,7 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
     }
     
     public PenaltyTicketDTO getNewPenaltyTicket() {
-        int member_id = member.getMember_id();
+        int member_id = member.getId();
         int staff_id = staff.getId();
         int returnticket_id = returnTicket.getId();
         int total_fine = calculateTotalFine(detailList);

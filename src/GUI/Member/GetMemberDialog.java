@@ -32,7 +32,7 @@ public class GetMemberDialog extends javax.swing.JDialog {
     public void customInit() {
         setLocationRelativeTo(null);
         
-        memberList = memberBUS.getAllMember();
+        memberList = memberBUS.getAll();
         loadDataToTable(memberList);
         
         btn_choose.addMouseListener(new MouseAdapter() {
@@ -61,7 +61,7 @@ public class GetMemberDialog extends javax.swing.JDialog {
         tableModel.setRowCount(0);
         for (MemberDTO i : staffList) {
             tableModel.addRow(new Object[] {
-                    i.getMember_id(),
+                    i.getId(),
                     i.getFull_name()
             });
         }

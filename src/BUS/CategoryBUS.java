@@ -28,6 +28,10 @@ public class CategoryBUS {
         return categoryDAO.getById(id);
     }
     
+    public String getNameByID(int id) {
+        return categoryDAO.getById(id).getName();
+    }
+    
     public boolean add(CategoryDTO category) {
         return categoryDAO.add(category) > 0;
     }

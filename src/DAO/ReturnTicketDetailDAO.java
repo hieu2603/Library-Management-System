@@ -107,7 +107,9 @@ public class ReturnTicketDetailDAO {
                 ps.setInt(5, i.getDays_passed());
                 result = ps.executeUpdate();
                 
-                BookItemDAO.getInstance().changeStatus(BookItemDAO.getInstance().getByISBN(i.getIsbn()), "Có sẵn");
+                if(!i.getStatus().equals("Nguyên vẹn")) {
+                    BookItemDAO.getInstance().changeStatus(BookItemDAO.getInstance().getByISBN(i.getIsbn()), i.getStatus());
+                }
                 BorrowTicketDetailDTO borrowDetail = BorrowTicketDetailDAO.getInstance().getByTicketIdAndISBN(i.getBorrow_ticket_id(), i.getIsbn());
                 BorrowTicketDetailDAO.getInstance().changeStatus(borrowDetail, "Đã trả");
                 if(BorrowTicketDetailDAO.getInstance().getStatusCount(i.getBorrow_ticket_id(), "Chưa trả") == 0) {

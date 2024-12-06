@@ -42,7 +42,7 @@ public class MemberDTO {
         this.violationCount = violationCount;
     }
 
-    public int getMember_id() {
+    public int getId() {
         return member_id;
     }
 

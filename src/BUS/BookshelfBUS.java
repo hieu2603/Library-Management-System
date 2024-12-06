@@ -36,4 +36,35 @@ public class BookshelfBUS {
         return bookshelfDAO.update(bookshelf) != 0;
     }
     
+    public ArrayList<BookshelfDTO> search(String text, String type) {
+        ArrayList<BookshelfDTO> result = new ArrayList<>();
+        text = text.toLowerCase();
+        switch(type){
+            case "Tất cả" -> {
+                for(BookshelfDTO i : getAll()) {
+                    if(
+                            Integer.toString(i.getId()).contains(text)
+                            || i.getName().toLowerCase().contains(text)
+                            )
+                        result.add(i);
+                }
+            }
+            case "Mã kệ sách" -> {
+                for(BookshelfDTO i : getAll()) {
+                    if(Integer.toString(i.getId()).contains(text))
+                        result.add(i);
+                }
+            }
+            case "Tên kệ sách" -> {
+                for(BookshelfDTO i : getAll()) {
+                    if(i.getName().toLowerCase().contains(text))
+                        result.add(i);
+                }
+            }
+             default -> throw new AssertionError();
+        }
+        
+        return result;
+    }
+    
 }

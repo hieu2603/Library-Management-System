@@ -17,6 +17,10 @@ import helper.Formatter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -30,16 +34,18 @@ import javax.swing.table.DefaultTableModel;
 public class PurchasePanel extends javax.swing.JPanel {
     
     Main_Frame main;
+    
+    String[] searchTypes = {"Tất cả", "Mã phiếu nhập", "Nhà cung cấp", "Nhân viên", "Trạng thái"};
 
     ManagementTable tablePanel = new ManagementTable();
-    MenuBar menuBar = new MenuBar();
+    MenuBar menuBar = new MenuBar(searchTypes);
     MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
     
     SupplierBUS supplierBUS = new SupplierBUS();
     StaffBUS staffBUS = new StaffBUS();
     PurchaseTicketBUS purchaseTicketBUS = new PurchaseTicketBUS();
     
-    ArrayList<PurchaseTicketDTO> purchaseTicketList = purchaseTicketBUS.getAllPurchaseTicket();
+    ArrayList<PurchaseTicketDTO> purchaseTicketList = purchaseTicketBUS.getAll();
     
     public PurchasePanel(Main_Frame main) {
         this.main = main;
@@ -84,6 +90,21 @@ public class PurchasePanel extends javax.swing.JPanel {
                 viewEvent();
             }
         });
+        
+         menuBar.txt_search.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                searchEvent();
+            }
+        });
+        
+        menuBar.cbx_type.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                searchEvent();
+            }
+        });
+        
     }
     
     public void loadDataToTable(ArrayList<PurchaseTicketDTO> purchaseTicketList) {
@@ -100,8 +121,14 @@ public class PurchasePanel extends javax.swing.JPanel {
         }
     }
     
+    public void searchEvent() {
+        String searchText = menuBar.txt_search.getText();
+        String type = (String) menuBar.cbx_type.getSelectedItem();
+        loadDataToTable(purchaseTicketBUS.search(searchText, type));
+    }
+    
     public void refreshTable() {
-        purchaseTicketList = purchaseTicketBUS.getAllPurchaseTicket();
+        purchaseTicketList = purchaseTicketBUS.getAll();
         loadDataToTable(purchaseTicketList);
     }
     

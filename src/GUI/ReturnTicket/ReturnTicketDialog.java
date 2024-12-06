@@ -100,8 +100,8 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
                 return;
             txt_member.setText(member.getFull_name());
             
-            borrowTicketList = BorrowTicketDAO.getInstance().getNotReturnedByMemberID(member.getMember_id());
-            borrowDetailList = BorrowTicketDetailDAO.getInstance().getNotReturnedByMemberId(member.getMember_id());
+            borrowTicketList = BorrowTicketDAO.getInstance().getNotReturnedByMemberID(member.getId());
+            borrowDetailList = BorrowTicketDetailDAO.getInstance().getNotReturnedByMemberId(member.getId());
         });
 
         if(mode.equals("view"))
@@ -239,7 +239,7 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
     }
     
     public ReturnTicketDTO getNewReturnTicket() {
-        return new ReturnTicketDTO(staff.getId(), member.getMember_id(), returnDate, "1");
+        return new ReturnTicketDTO(staff.getId(), member.getId(), returnDate, "1");
     }
     
     public void getStatuses() {
