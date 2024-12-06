@@ -4,6 +4,7 @@
  */
 package GUI.Account;
 
+
 import BUS.AccountBUS;
 import BUS.PermissionBUS;
 import BUS.StaffBUS;
@@ -13,6 +14,7 @@ import DTO.StaffDTO;
 import GUI.Permission.GetPermissionDialog;
 import GUI.Staff.GetStaffDialog;
 import config.Constants;
+import helper.Validator;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +22,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -150,17 +153,63 @@ public class AccountDialog extends javax.swing.JDialog {
         }
     }
     
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txt_username.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên đăng nhập");
+            return false;
+        }        
+        
+        if(Validator.isEmpty(txt_password.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập mật khảu");
+            return false;
+        }
+        
+        if(Validator.isEmpty(txt_staff.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn nhân viên");
+            return false;
+        }
+        
+        if(Validator.isEmpty(txt_permission.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn phân quyền");
+            return false;
+        }
+        
+        if(!Validator.isWithinLength(txt_username.getText(), 20)) {
+            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 20 kí tự");
+            return false;
+        }
+        
+        if(!Validator.isWithinLength(txt_password.getText(), 20)) {
+            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 20 kí tự");
+            return false;
+        }
+        
+        if(accountBUS.isUsernameDuplicate(txt_username.getText())){
+            JOptionPane.showMessageDialog(this, "Tên đăng nhập đã có sẵn");
+            return false;
+        }
+        
+        if(Validator.isValidPassword(txt_password.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn phải nhập mật khẩu ít nhất 8 ký tự, gồm ít nhất 1 chữ cái, 1 số, 1 ký tự đặc biệt");
+            return false;
+        }
+        
+        return true;
+    }
+    
     public AccountDTO getNewAccount() {
         String username = txt_username.getText();
         String password= String.valueOf(txt_password.getPassword());
         int permission_id = permission.getId();
         String status = cbx_status.getSelectedItem().toString();
         int staff_id = staff.getId();
-        
         return new AccountDTO(username, password, permission_id, status, staff_id);
     }
     
     public void addEvent() {
+        if(!validateInputs()){
+            return;
+        }
         account = getNewAccount();
         if(accountBUS.createAccount(account)) {
             JOptionPane.showMessageDialog(null, "Thêm tài khoản mới thành công");
@@ -247,6 +296,11 @@ public class AccountDialog extends javax.swing.JDialog {
         lbl_permission.setText("Nhóm quyền");
 
         txt_permission.setFocusable(false);
+        txt_permission.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_permissionActionPerformed(evt);
+            }
+        });
 
         lbl_status.setText("Trạng thái");
 
@@ -371,6 +425,10 @@ public class AccountDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txt_permissionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_permissionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_permissionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

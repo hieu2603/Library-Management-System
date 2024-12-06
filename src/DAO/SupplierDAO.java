@@ -183,6 +183,42 @@ public class SupplierDAO {
     
     return list; // Trả về danh sách các nhà cung cấp tìm thấy
 }
+    
+    public static boolean isNameDuplicate(String name) {
+    String query = "SELECT 1 FROM supplier WHERE name = ? LIMIT 1";
+    
+    try (Connection conn = Database.getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        
+        ps.setString(1, name);
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next(); // Nếu có kết quả, username đã tồn tại.
+        }
+        
+    } catch (SQLException e) {
+        e.printStackTrace(); // Log lỗi nếu có
+    }
+    return false; // Trả về false nếu không tìm thấy username
+    }
+    
+    public static boolean isPhoneDuplicate(String phone) {
+    String query = "SELECT 1 FROM supplier WHERE phone = ? LIMIT 1";  
+
+    try (Connection conn = Database.getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+
+        ps.setString(1, phone);  
+
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next(); 
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();  
+    }
+    return false;  
+}
 
 
 }

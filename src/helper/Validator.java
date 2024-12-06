@@ -4,7 +4,11 @@
  */
 package helper;
 
+import config.Database;
 import java.util.regex.Pattern;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 /**
  *
@@ -80,5 +84,22 @@ public class Validator {
         Pattern pattern = Pattern.compile(isbnRegex);
         return pattern.matcher(input).matches();
     }
+
+    public static boolean isWithinLength(String input, int maxLength) {
+        if (input == null) {
+            return false;
+        }
+        return input.length() <= maxLength;
+    }
     
+    // Kiểm tra mật khẩu (ít nhất 8 ký tự, gồm ít nhất 1 chữ cái, 1 số, 1 ký tự đặc biệt)
+    public static boolean isValidPassword(String password) {
+        if (password == null) {
+            return false;
+        }
+        String passwordRegex = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
+        Pattern pattern = Pattern.compile(passwordRegex);
+        return pattern.matcher(password).matches();
+    }
+
 }
