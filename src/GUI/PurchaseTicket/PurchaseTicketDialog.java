@@ -40,17 +40,17 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
     SupplierDTO supplier;
     PurchaseTicketDTO purchaseTicket;
     String mode;
-    
+
     StaffBUS staffBUS = new StaffBUS();
     SupplierBUS supplierBUS = new SupplierBUS();
     PurchaseTicketBUS purchaseTicketBUS = new PurchaseTicketBUS();
     PurchaseTicketDetailBUS purchaseTicketDetailBUS = new PurchaseTicketDetailBUS();
-    
+
     ArrayList<PurchaseTicketDetailDTO> detailList;
     ArrayList<BookItemDTO> bookItemList;
-    
+
     private HashMap<Integer, String> isbnList = new HashMap<>();
-    
+
     public PurchaseTicketDialog(java.awt.Frame parent, boolean modal, PurchaseTicketDTO purchaseTicket, String mode) {
         super(parent, modal);
         this.purchaseTicket = purchaseTicket;
@@ -58,44 +58,47 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
         initComponents();
         customInit();
     }
-    
+
     public void customInit() {
         setLocationRelativeTo(null);
-        
+
         btn_addBook.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 addBookEvent();
             }
         });
-        
+
         btn_save.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if(mode.equals("add"))
+                if (mode.equals("add")) {
                     addEvent();
+                }
             }
         });
-        
+
         btn_exit.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 dispose();
             }
         });
-        
-        if(mode.equals("view"))
+
+        if (mode.equals("view")) {
             initViewMode();
-        if(mode.equals("add"))
+        }
+        if (mode.equals("add")) {
             initAddMode();
+        }
     }
-    
+
     public void initData() {
         supplier = supplierBUS.getById(purchaseTicket.getSupplier_id());
         staff = staffBUS.getById(purchaseTicket.getStaff_id());
         detailList = purchaseTicketDetailBUS.getByPurchaseTicketId(purchaseTicket.getId());
     }
-    
+
     public void initViewMode() {
         initData();
         txt_id.setText(purchaseTicket.getId() + "");
@@ -104,44 +107,44 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
         txt_purchaseDate.setText(Formatter.getDate(purchaseTicket.getPurchase_date()));
         txt_status.setText(purchaseTicket.getStatus());
         txt_totalPrice.setText(Formatter.FormatVND(purchaseTicket.getTotal_price()));
-        
+
         btn_addBook.setVisible(false);
         btn_save.setVisible(false);
         btn_supplier.setEnabled(false);
-        
+
         loadDataToTable(detailList);
     }
-    
+
     public void initAddMode() {
         lbl_title.setText("TẠO PHIẾU NHẬP MỚI");
         detailList = new ArrayList<>();
         bookItemList = new ArrayList<>();
         staff = SessionManager.getInstance().getLoggedInStaff();
         txt_staff.setText(staff.getFullName());
-        
+
         txt_purchaseDate.setText(Formatter.getDate(new Timestamp(System.currentTimeMillis())));
-        
+
         lbl_id.setEnabled(false);
         txt_id.setEnabled(false);
         lbl_status.setEnabled(false);
         txt_status.setEnabled(false);
     }
-    
+
     public void loadDataToTable(ArrayList<PurchaseTicketDetailDTO> detailList) {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
         tableModel.setRowCount(0);
         for (PurchaseTicketDetailDTO i : detailList) {
             BookDTO book = BookBUS.getInstance().getById(i.getBook_id());
-            tableModel.addRow(new Object[] {
-                    i.getBook_id(),
-                    book.getTitle(),
-                    i.getQuantity(),
-                    Formatter.FormatVND(i.getPrice()),
-                    Formatter.FormatVND(i.getTotal_price())
+            tableModel.addRow(new Object[]{
+                i.getBook_id(),
+                book.getTitle(),
+                i.getQuantity(),
+                Formatter.FormatVND(i.getPrice()),
+                Formatter.FormatVND(i.getTotal_price())
             });
         }
     }
-    
+
     public void addBookEvent() {
         String[] option = {"Tạo sách mới", "Chọn sách", "Hủy"};
         int selection = JOptionPane.showOptionDialog(null, "Bạn muốn nhập sản sách mới hay chọn sách có sẵn?", "", 0, 3, null, option, option[2]);
@@ -159,19 +162,27 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
             int ticket_id = purchaseTicketBUS.getLastID() + 1;
             int book_id = book.getId();
             int quantity = InputGetter.getNumberInput("Số lượng sách");
+            
+            if (quantity == 0) {
+                return;
+            }
+            
             long price = InputGetter.getNumberInput("Đơn giá");
+            
+            if (price == 0) {
+                return;
+            }
 
             String isbn;
-            do {
-                isbn = InputGetter.getStringInput("ISBN");
-                if (isbn == null) {
-                    return;
-                }
-                if(!Validator.isValidISBN(isbn)) {
-                    JOptionPane.showMessageDialog(this, "ISBN phải là số có 11 chữ số và không bắt đầu bằng số 0");
-                }
-            } while (!Validator.isValidISBN(isbn));
-            
+            isbn = InputGetter.getStringInput("ISBN");
+            if (isbn == null) {
+                return;
+            }
+            if (!Validator.isValidISBN(isbn)) {
+                JOptionPane.showMessageDialog(this, "ISBN phải là số có 11 chữ số và không bắt đầu bằng số 0");
+                return;
+            }
+
             isbnList.put(book.getId(), isbn);
 
             PurchaseTicketDetailDTO detail = new PurchaseTicketDetailDTO(ticket_id, book_id, quantity, price, (long) (price * quantity));
@@ -180,7 +191,7 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
             txt_totalPrice.setText(Formatter.FormatVND(getTotalPrice()));
         }
     }
-    
+
     public long getTotalPrice() {
         long result = 0;
         for (PurchaseTicketDetailDTO i : detailList) {
@@ -188,7 +199,7 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
         }
         return result;
     }
-    
+
     public void generateBookItemList() {
         for (PurchaseTicketDetailDTO i : detailList) {
             String isbn = isbnList.get(i.getBook_id());
@@ -203,36 +214,36 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
             }
         }
     }
-    
+
     public PurchaseTicketDTO getNewPurchaseTicket() {
         int supplier_id = supplier.getId();
         int staff_id = staff.getId();
         Timestamp purchase_date = new Timestamp(System.currentTimeMillis());
         String status = "1";
         long total_price = getTotalPrice();
-        
+
         return new PurchaseTicketDTO(supplier_id, staff_id, purchase_date, status, total_price);
     }
-    
+
     public boolean validateInputs() {
-        if(Validator.isEmpty(txt_supplier.getText())) {
+        if (Validator.isEmpty(txt_supplier.getText())) {
             JOptionPane.showMessageDialog(this, "Bạn chưa chọn nhà cung cấp");
             return false;
         }
         return true;
     }
-    
+
     public void addEvent() {
-        if(!validateInputs()){
+        if (!validateInputs()) {
             return;
         }
-        if(jTable1.getRowCount() == 0){
+        if (jTable1.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Phải có ít nhất 1 sách để tạo phiếu nhập!");
             return;
         }
         purchaseTicket = getNewPurchaseTicket();
         generateBookItemList();
-        if(purchaseTicketBUS.addWithLists(purchaseTicket, detailList, bookItemList)) {
+        if (purchaseTicketBUS.addWithLists(purchaseTicket, detailList, bookItemList)) {
             JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công!");
             dispose();
         }
@@ -457,6 +468,11 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
         btn_addBook.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btn_addBook.setForeground(new java.awt.Color(255, 255, 255));
         btn_addBook.setText("Thêm sách");
+        btn_addBook.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_addBookActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -507,10 +523,15 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
 
     private void btn_supplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_supplierActionPerformed
         supplier = GetSupplierDialog.getSupplier();
-        if(supplier == null)
+        if (supplier == null) {
             return;
+        }
         txt_supplier.setText(supplier.getName());
     }//GEN-LAST:event_btn_supplierActionPerformed
+
+    private void btn_addBookActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addBookActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_addBookActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
