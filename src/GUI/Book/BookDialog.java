@@ -14,9 +14,12 @@ import DTO.BookItemDTO;
 import DTO.BookshelfDTO;
 import DTO.CategoryDTO;
 import DTO.PublisherDTO;
+import DTO.SessionManager;
 import GUI.Bookshelf.GetBookshelfDialog;
 import GUI.Category.CategoryDialog;
 import GUI.Publisher.GetPublisherDialog;
+import config.Constants;
+import helper.Validator;
 import java.awt.CardLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -51,6 +54,7 @@ public class BookDialog extends javax.swing.JDialog {
     PublisherDTO publisher;
     BookshelfDTO bookshelf;
     String mode;
+    int functionId = Constants.functions.get("Quản lý sách");
     
     CategoryBUS categoryBUS = new CategoryBUS();
     PublisherBUS publisherBUS = new PublisherBUS();
@@ -84,11 +88,8 @@ public class BookDialog extends javax.swing.JDialog {
             }
         });
         
-        btn_edit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                enableForm();
-            }
+        btn_edit.addActionListener((ActionEvent e) -> {
+            enableForm();
         });
         
         btn_exit.addMouseListener(new MouseAdapter() {
@@ -154,6 +155,9 @@ public class BookDialog extends javax.swing.JDialog {
         bookItemList = bookItemBUS.getByBookId(book.getId());
         txt_quantity1.setText(calculateAvailableQuantity(bookItemList) + "");
         loadDataToTable(bookItemList);
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            btn_edit.setEnabled(false);
     }
     
     public int calculateAvailableQuantity(ArrayList<BookItemDTO> bookItemList) {
@@ -239,6 +243,50 @@ public class BookDialog extends javax.swing.JDialog {
         btn_bookshelf.setEnabled(true);
     }
     
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txt_title.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên sách");
+            return false;
+        }
+        if(Validator.isEmpty(txt_author.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tác giả");
+            return false;
+        }
+        if(Validator.isEmpty(txt_publisher.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn nhà xuất bản");
+            return false;
+        }
+        if(Validator.isEmpty(txt_bookshelf.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn kệ sách");
+            return false;
+        }
+        if(Validator.isEmpty(txt_category.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn danh mục");
+            return false;
+        }
+        if(Validator.isEmpty(txt_year.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập năm xuất bản");
+            return false;
+        }
+        if(!Validator.isName(txt_title.getText())) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên sách hợp lệ");
+            return false;
+        }
+        if(!Validator.isName(txt_author.getText())) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên tác giả hợp lệ");
+            return false;
+        }
+        if(!Validator.isInteger(txt_year.getText())) {
+            JOptionPane.showMessageDialog(this, "Năm xuất bản phải là số nguyên");
+            return false;
+        }
+        if (imageURL == null) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn hình ảnh cho sách");
+            return false;
+        }
+        return true;
+    }
+    
     public void editBook() {
         book.setTitle(txt_title.getText());
         book.setAuthor(txt_author.getText());
@@ -251,6 +299,8 @@ public class BookDialog extends javax.swing.JDialog {
     }
     
     public void updateEvent() {
+        if(!validateInputs())
+            return;
         editBook();
         if(bookBUS.updateBook(book)) {
             JOptionPane.showMessageDialog(null, "Sửa thông tin sách thành công");
@@ -271,6 +321,8 @@ public class BookDialog extends javax.swing.JDialog {
     }
     
     public void addEvent() {
+        if(!validateInputs())
+            return;
         book = getNewBook();
         if(bookBUS.addBook(book)) {
             JOptionPane.showMessageDialog(null, "Thêm sách mới thành công");

@@ -10,6 +10,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class MemberDAO {
+    
+    public static MemberDAO getInstance() {
+        return new MemberDAO();
+    }
 
     public int add(MemberDTO member) {
         int result = 0;
@@ -52,6 +56,26 @@ public class MemberDAO {
             ps.setString(6, member.getStatus());
             ps.setInt(7, member.getViolationCount());
             ps.setInt(8, member.getId());
+
+            result = ps.executeUpdate();
+            Database.closeConnection(conn);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+
+    }
+    
+    public int increaseViolationCount(int memberId) {
+        int result = 0;
+        try {
+            Connection conn = Database.getConnection();
+            String query = "UPDATE member SET violationCount = violationCount + 1 WHERE member_id = ?  ";
+
+            PreparedStatement ps = conn.prepareStatement(query);
+
+            ps.setInt(1, memberId);
 
             result = ps.executeUpdate();
             Database.closeConnection(conn);
@@ -210,4 +234,29 @@ public class MemberDAO {
 
         return list; // Trả về danh sách các nhân viên tìm thấy
     }
+    
+    public int getAllCount() {
+        int result = 0;
+        
+        try {
+            Connection connection = Database.getConnection();
+
+            String query = "SELECT COUNT(*) count FROM member";
+
+            PreparedStatement ps = connection.prepareStatement(query);
+            
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                result = rs.getInt("count");
+            }
+
+            Database.closeConnection(connection);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+    
 }

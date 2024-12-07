@@ -12,6 +12,7 @@ import GUI.Component.MenuBarButton;
 import GUI.Main_Frame;
 import GUI.Staff.StaffDialog;
 import helper.Formatter;
+import helper.JTableExporter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +22,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -38,6 +40,7 @@ public class StaffPanel extends javax.swing.JPanel {
     ManagementTable tablePanel = new ManagementTable();
     MenuBar menuBar = new MenuBar(searchTypes);
     MenuBarButton addBtn = new MenuBarButton("Thêm", "add.svg", new Color(173, 169, 178), "add");
+    MenuBarButton exportBtn = new MenuBarButton("Xuất excel", "export_excel.svg", new Color(52, 199, 89), "export");
     
     StaffBUS staffBUS = new StaffBUS();
     ArrayList<StaffDTO> staffList = staffBUS.getAll();
@@ -72,6 +75,18 @@ public class StaffPanel extends javax.swing.JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 addEvent();
+            }
+        });
+        
+        menuBar.jToolBar1.add(exportBtn);
+        exportBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    JTableExporter.exportJTableToExcel(tablePanel.table);
+                } catch (IOException ex) {
+                    System.out.println(ex);
+                }
             }
         });
         

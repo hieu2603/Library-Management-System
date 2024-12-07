@@ -6,6 +6,10 @@ package GUI.Publisher;
 
 import BUS.PublisherBUS;
 import DTO.PublisherDTO;
+import DTO.SessionManager;
+import config.Constants;
+import helper.Validator;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
@@ -18,6 +22,7 @@ public class PublisherDialog extends javax.swing.JDialog {
 
     PublisherDTO publisher;
     String mode;
+    int functionId = Constants.functions.get("Quản lý nhà xuất bản");
     
     PublisherBUS publisherBUS = new PublisherBUS();
     
@@ -42,11 +47,8 @@ public class PublisherDialog extends javax.swing.JDialog {
             }
         });
         
-        btn_edit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                enableForm();
-            }
+        btn_edit.addActionListener((ActionEvent e) -> {
+            enableForm();
         });
         
         btn_exit.addMouseListener(new MouseAdapter() {
@@ -71,6 +73,9 @@ public class PublisherDialog extends javax.swing.JDialog {
         txt_name.setFocusable(false);
         txt_address.setFocusable(false);
         txt_phone.setFocusable(false);
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            btn_edit.setEnabled(false);
     }
     
     public void initAddMode() {
@@ -92,6 +97,8 @@ public class PublisherDialog extends javax.swing.JDialog {
     }
     
     public void updateEvent() {
+        if(!validateInputs())
+            return;
         editPublisher();
         if(publisherBUS.update(publisher)) {
             JOptionPane.showMessageDialog(null, "Lưu thông tin nhà xuất bản thành công");
@@ -107,7 +114,43 @@ public class PublisherDialog extends javax.swing.JDialog {
         return new PublisherDTO(name, address, phone);
     }
     
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txt_name.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên");
+            return false;
+        } 
+        
+        if(!Validator.isWithinLength(txt_name.getText(), 30)) {
+            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 30 kí tự");
+            return false;
+        }
+        
+        if(Validator.isEmpty(txt_address.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập địa chỉ");
+            return false;
+        }        
+        
+        if(Validator.isEmpty(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn số điện thoại");
+            return false;
+        }
+        
+        if(!Validator.isPhoneNumber(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn phải nhập đúng định dạng số điện thoại");
+            return false;
+        }
+        
+        if(!Validator.isWithinLength(txt_address.getText(), 50)) {
+            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 50 kí tự");
+            return false;
+        }
+        
+        return true;
+    }
+    
     public void addEvent() {
+        if(!validateInputs())
+            return;
         publisher = getNewPublisher();
         if(publisherBUS.add(publisher)) {
             JOptionPane.showMessageDialog(null, "Thêm nhà xuất bản thành công");

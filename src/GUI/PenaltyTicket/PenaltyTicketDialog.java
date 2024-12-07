@@ -224,6 +224,14 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
     }
     
     public void addEvent() {
+        if (member == null) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn thành viên!");
+            return;
+        }
+        if(returnTicket == null) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn phiếu trả!");
+            return;
+        }
         penaltyTicket = getNewPenaltyTicket();
         if(penaltyTicketBUS.addWithDetail(penaltyTicket, detailList)) {
             JOptionPane.showMessageDialog(this, "Tạo phiếu phạt thành công!");

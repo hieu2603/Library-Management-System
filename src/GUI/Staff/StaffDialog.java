@@ -5,10 +5,13 @@
 package GUI.Staff;
 
 import BUS.StaffBUS;
+import DTO.SessionManager;
 import DTO.StaffDTO;
 import config.Constants;
 import helper.Formatter;
+import helper.Validator;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -28,6 +31,7 @@ public class StaffDialog extends javax.swing.JDialog {
 
     StaffDTO staff;
     String mode;
+    int functionId = Constants.functions.get("Quản lý nhân viên");
     
     StaffBUS staffBUS = new StaffBUS();
     
@@ -57,11 +61,8 @@ public class StaffDialog extends javax.swing.JDialog {
             }
         });
         
-        btn_edit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                enableForm();
-            }
+        btn_edit.addActionListener((ActionEvent e) -> {
+            enableForm();
         });
         
         btn_exit.addMouseListener(new MouseAdapter() {
@@ -101,6 +102,9 @@ public class StaffDialog extends javax.swing.JDialog {
         txt_phone.setFocusable(false);
         txt_email.setFocusable(false);
         cbx_status.setEnabled(false);
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            btn_edit.setEnabled(false);
     }
     
     public void initAddMode() {
@@ -139,6 +143,8 @@ public class StaffDialog extends javax.swing.JDialog {
     }
     
     public void updateEvent() {
+        if(!validateInputs())
+            return;
         editStaff();
         if(staffBUS.updateStaff(staff)) {
             JOptionPane.showMessageDialog(null, "Lưu thông tin nhân viên thành công");
@@ -161,7 +167,53 @@ public class StaffDialog extends javax.swing.JDialog {
         return new StaffDTO(fullName, email, phone, gender, birthday, address, hireDate, email);
     }
     
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txt_name.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập họ tên");
+            return false;
+        }
+        if(jDateChooser1.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn ngày sinh");
+            return false;
+        }
+        if(radio_male.isSelected()==false && radio_female.isSelected()==false) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn giới tính cho nhân viên");
+            return false;
+        }
+        if(Validator.isEmpty(txt_address.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập địa chỉ của nhân viên");
+            return false;
+        }
+        if(Validator.isEmpty(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập số điện thoại của nhân viên");
+            return false;
+        }
+        if(Validator.isEmpty(txt_email.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập email của nhân viên");
+            return false;
+        }
+        if(!Validator.isName(txt_name.getText())) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên hợp lệ");
+            return false;
+        }
+        if(!Validator.isWithinLength(txt_address.getText(), 50)) {
+            JOptionPane.showMessageDialog(this, "Địa chỉ không được dài quá 50 kí tự");
+            return false;
+        }
+        if(!Validator.isPhoneNumber(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải là số bắt đầu bằng 0 và có độ dài 10 chữ số");
+            return false;
+        }
+        if(!Validator.isEmail(txt_email.getText())) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng email");
+            return false;
+        }
+        return true;
+    }
+    
     public void addEvent() {
+        if(!validateInputs())
+            return;
         staff = getNewStaff();
         if(staffBUS.createStaff(staff)) {
             JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công");
