@@ -5,8 +5,11 @@
 package GUI.Supplier;
 
 import BUS.SupplierBUS;
+import DTO.SessionManager;
 import DTO.SupplierDTO;
+import config.Constants;
 import helper.Validator;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
@@ -19,6 +22,7 @@ public class SupplierDialog extends javax.swing.JDialog {
 
     SupplierDTO supplier;
     String mode;
+    int functionId = Constants.functions.get("Quản lý sách");
     
     SupplierBUS supplierBUS = new SupplierBUS();
     
@@ -43,11 +47,8 @@ public class SupplierDialog extends javax.swing.JDialog {
             }
         });
         
-        btn_edit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                enableForm();
-            }
+        btn_edit.addActionListener((ActionEvent e) -> {
+            enableForm();
         });
         
         btn_exit.addMouseListener(new MouseAdapter() {
@@ -72,6 +73,9 @@ public class SupplierDialog extends javax.swing.JDialog {
         txt_name.setFocusable(false);
         txt_address.setFocusable(false);
         txt_phone.setFocusable(false);
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            btn_edit.setEnabled(false);
     }
     
     public void initAddMode() {
@@ -93,6 +97,8 @@ public class SupplierDialog extends javax.swing.JDialog {
     }
     
     public void updateEvent() {
+        if(!validateInputs())
+            return;
         editSupplier();
         if(supplierBUS.updateSupplier(supplier)) {
             JOptionPane.showMessageDialog(null, "Lưu thông tin nhà cung cấp thành công");
@@ -150,7 +156,7 @@ public class SupplierDialog extends javax.swing.JDialog {
         }
         
         if(!Validator.isWithinLength(txt_address.getText(), 50)) {
-            JOptionPane.showMessageDialog(this, "Bạn không được nhập quá 50 kí tự");
+            JOptionPane.showMessageDialog(this, "Địa chỉ không được dài quá 50 kí tự");
             return false;
         }
         

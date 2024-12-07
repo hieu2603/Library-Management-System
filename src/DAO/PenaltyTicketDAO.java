@@ -32,6 +32,8 @@ public class PenaltyTicketDAO {
             ps.setInt(5, penaltyTicket.getTotal_fine());
 
             result = ps.executeUpdate();
+            
+            MemberDAO.getInstance().increaseViolationCount(penaltyTicket.getMember_id());
 
             Database.closeConnection(connection);
 

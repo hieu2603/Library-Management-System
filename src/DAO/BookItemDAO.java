@@ -56,6 +56,30 @@ public class BookItemDAO {
         return list;
     }
     
+    public int getAllCount() {
+        int result = 0;
+        
+        try {
+            Connection connection = Database.getConnection();
+
+            String query = "SELECT COUNT(*) count FROM bookitem";
+
+            PreparedStatement ps = connection.prepareStatement(query);
+            
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                result = rs.getInt("count");
+            }
+
+            Database.closeConnection(connection);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+    
     public BookItemDTO getByISBN(String isbn) {
         BookItemDTO bookItem = null;
 

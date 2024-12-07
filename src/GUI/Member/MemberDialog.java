@@ -6,9 +6,12 @@ package GUI.Member;
 
 import BUS.MemberBUS;
 import DTO.MemberDTO;
+import DTO.SessionManager;
 import config.Constants;
 import helper.Formatter;
+import helper.Validator;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
@@ -22,6 +25,7 @@ public class MemberDialog extends javax.swing.JDialog {
 
     MemberDTO member;
     String mode;
+    int functionId = Constants.functions.get("Quản lý thành viên");
     
     MemberBUS memberBUS = new MemberBUS();
     
@@ -52,11 +56,8 @@ public class MemberDialog extends javax.swing.JDialog {
             }
         });
         
-        btn_edit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                enableForm();
-            }
+        btn_edit.addActionListener((ActionEvent e) -> {
+            enableForm();
         });
         
         btn_exit.addMouseListener(new MouseAdapter() {
@@ -87,6 +88,9 @@ public class MemberDialog extends javax.swing.JDialog {
         txt_phone.setFocusable(false);
         txt_email.setFocusable(false);
         cbx_status.setEnabled(false);
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            btn_edit.setEnabled(false);
     }
     
     public void initAddMode() {
@@ -118,47 +122,38 @@ public class MemberDialog extends javax.swing.JDialog {
     }
     
     private boolean validateInput() {
-        String fullName = txt_name.getText().trim();
-        String phone = txt_phone.getText().trim();
-        String email = txt_email.getText().trim();
-        String address = txt_address.getText().trim();
-        String status = (String) cbx_status.getSelectedItem();
-
-        // Validate Full Name
-        if (fullName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Họ tên không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txt_name.requestFocus();
+        if(Validator.isEmpty(txt_name.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập họ tên");
             return false;
         }
-
-        // Validate Phone Number
-        if (!phone.matches("\\d{10,15}")) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại phải gồm từ 10 đến 15 chữ số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txt_phone.requestFocus();
+        if(Validator.isEmpty(txt_address.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập địa chỉ của nhân viên");
             return false;
         }
-
-        // Validate Email
-        if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-            JOptionPane.showMessageDialog(this, "Email không hợp lệ.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txt_email.requestFocus();
+        if(Validator.isEmpty(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập số điện thoại của nhân viên");
             return false;
         }
-
-        // Validate Address
-        if (address.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Địa chỉ không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            txt_address.requestFocus();
+        if(Validator.isEmpty(txt_email.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập email của nhân viên");
             return false;
         }
-
-        // Validate Status
-        if (status == null || status.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Trạng thái không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            cbx_status.requestFocus();
+        if(!Validator.isName(txt_name.getText())) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên hợp lệ");
             return false;
         }
-
+        if(!Validator.isWithinLength(txt_address.getText(), 50)) {
+            JOptionPane.showMessageDialog(this, "Địa chỉ không được dài quá 50 kí tự");
+            return false;
+        }
+        if(!Validator.isPhoneNumber(txt_phone.getText())) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải là số bắt đầu bằng 0 và có độ dài 10 chữ số");
+            return false;
+        }
+        if(!Validator.isEmail(txt_email.getText())) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng email");
+            return false;
+        }
         return true;
     }
     

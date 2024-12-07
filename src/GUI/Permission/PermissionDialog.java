@@ -11,6 +11,9 @@ import DAO.PermissionDAO;
 import DTO.FunctionDTO;
 import DTO.PermissionDTO;
 import DTO.PermissionDetailDTO;
+import DTO.SessionManager;
+import config.Constants;
+import helper.Validator;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public final class PermissionDialog extends javax.swing.JDialog {
     String[] actionKey = {"view", "add", "edit", "delete"};
     String[] action = {"Xem", "Thêm", "Sửa", "Xóa"};
     private int functionSize, actionSize;
+    int functionId = Constants.functions.get("Quản lý phân quyền");
     
     private FunctionBUS functionBUS = new FunctionBUS();
     private ArrayList<FunctionDTO> functionList = functionBUS.getAll();
@@ -89,10 +93,16 @@ public final class PermissionDialog extends javax.swing.JDialog {
                 pnl_checkbox.add(checkBoxList[i][j]);
             }
         }
-        
+    
         enablingForm(false);
-        if(permission == null)
+        if(permission == null) {
             jLabel2.setText("THÊM QUYỀN MỚI");
+            enablingForm(true);
+        }
+        else {
+            if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            jButton3.setEnabled(false);
+        }
     }
     
     public void initData() {
@@ -126,14 +136,43 @@ public final class PermissionDialog extends javax.swing.JDialog {
         return result;
     }
     
+    public void disablingUnusedCheckBoxes() {
+        for(int i=0; i<functionSize; i++) {
+            for(int j=0; j<actionSize; j++) {
+                if(functionList.get(i).getName().equals("Thống kê")) {
+                    if(actionKey[j].equals("add") || actionKey[j].equals("edit") || actionKey[j].equals("delete"))
+                        checkBoxList[i][j].setEnabled(false);
+                }
+                if(
+                        functionList.get(i).getName().equals("Quản lý mượn sách")
+                        || functionList.get(i).getName().equals("Quản lý trả sách")
+                        || functionList.get(i).getName().equals("Quản lý nhập sách")
+                        || functionList.get(i).getName().equals("Quản lý vi phạm")
+                        ) {
+                    if(actionKey[j].equals("edit") || actionKey[j].equals("delete"))
+                        checkBoxList[i][j].setEnabled(false);
+                }
+            }
+        }
+    }
+    
     public void enablingForm(boolean enabled) {
         txtName.setFocusable(enabled);
         for(JCheckBox[] i : checkBoxList)
             for(JCheckBox j : i)
                 j.setEnabled(enabled);
+        disablingUnusedCheckBoxes();
     }
     
-    public boolean validation() {
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txtName.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên nhóm quyền");
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean duplicateValidation() {
         ArrayList<PermissionDTO> permissionList = permissionBUS.getAll();
         for(PermissionDTO i : permissionList) {
             if(this.permission != null)
@@ -146,7 +185,9 @@ public final class PermissionDialog extends javax.swing.JDialog {
     }
     
     public void addEvent() {
-        if(!validation()) {
+        if(!validateInputs())
+            return;
+        if(!duplicateValidation()) {
             JOptionPane.showMessageDialog(this, "Nhóm quyền đã tồn tại");
             return;
         }
@@ -163,7 +204,9 @@ public final class PermissionDialog extends javax.swing.JDialog {
     }
     
     public void editEvent() {
-        if(!validation()) {
+        if(!validateInputs())
+            return;
+        if(!duplicateValidation()) {
             JOptionPane.showMessageDialog(this, "Nhóm quyền đã tồn tại");
             return;
         }

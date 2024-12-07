@@ -238,4 +238,28 @@ public class BookDAO {
         return book;
     }
     
+    public int getAllCount() {
+        int result = 0;
+        
+        try {
+            Connection connection = Database.getConnection();
+
+            String query = "SELECT COUNT(*) count FROM book";
+
+            PreparedStatement ps = connection.prepareStatement(query);
+            
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                result = rs.getInt("count");
+            }
+
+            Database.closeConnection(connection);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+    
 }
