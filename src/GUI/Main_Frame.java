@@ -5,6 +5,7 @@
 package GUI;
 
 import DTO.AccountDTO;
+import DTO.SessionManager;
 import GUI.Component.SideNav;
 import GUI.Panel.AccountPanel;
 import GUI.Panel.BorrowPanel;
@@ -20,6 +21,7 @@ import GUI.Panel.PenaltyPanel;
 import GUI.Panel.PublisherPanel;
 import GUI.Panel.StatisticPanel;
 import GUI.Panel.SupplierPanel;
+import config.Constants;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;

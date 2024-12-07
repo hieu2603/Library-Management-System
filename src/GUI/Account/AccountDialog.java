@@ -10,6 +10,7 @@ import BUS.PermissionBUS;
 import BUS.StaffBUS;
 import DTO.AccountDTO;
 import DTO.PermissionDTO;
+import DTO.SessionManager;
 import DTO.StaffDTO;
 import GUI.Permission.GetPermissionDialog;
 import GUI.Staff.GetStaffDialog;
@@ -32,6 +33,7 @@ public class AccountDialog extends javax.swing.JDialog {
     
     AccountDTO account;
     String mode;
+    int functionId = Constants.functions.get("Quản lý tài khoản");
     
     AccountBUS accountBUS = new AccountBUS();
     StaffBUS staffBUS = new StaffBUS();
@@ -66,11 +68,8 @@ public class AccountDialog extends javax.swing.JDialog {
             }
         });
         
-        btn_edit.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                enableForm();
-            }
+        btn_edit.addActionListener((ActionEvent e) -> {
+            enableForm();
         });
         
         btn_exit.addMouseListener(new MouseAdapter() {
@@ -116,6 +115,10 @@ public class AccountDialog extends javax.swing.JDialog {
         
         staff = staffBUS.getById(account.getStaff_id());
         permission = permissionBUS.getById(account.getPermission_id());
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            btn_edit.setEnabled(false);
+
     }
 
     public void initAddMode() {

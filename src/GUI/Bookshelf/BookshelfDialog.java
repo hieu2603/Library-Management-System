@@ -8,7 +8,10 @@ import BUS.BookBUS;
 import BUS.BookshelfBUS;
 import DTO.BookDTO;
 import DTO.BookshelfDTO;
+import DTO.SessionManager;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import config.Constants;
+import helper.Validator;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class BookshelfDialog extends javax.swing.JDialog {
 
     BookshelfDTO bookshelf;
     String mode;
+    int functionId = Constants.functions.get("Quản lý kệ sách");
     
     ArrayList<BookDTO> bookList;
     
@@ -81,6 +85,9 @@ public class BookshelfDialog extends javax.swing.JDialog {
         txt_id.setText(bookshelf.getId() + "");
         txt_name.setFocusable(false);
         txt_name.setText(bookshelf.getName());
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
+            btn_edit.setEnabled(false);
     }
     
     public void initAddMode() {
@@ -100,7 +107,17 @@ public class BookshelfDialog extends javax.swing.JDialog {
         return new BookshelfDTO(name);
     }
     
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txt_name.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên kệ sách");
+            return false;
+        }
+        return true;
+    }
+    
     public void updateEvent() {
+        if(!validateInputs())
+            return;
         editBookshelf();
         if(bookshelfBUS.update(bookshelf)) {
             JOptionPane.showMessageDialog(null, "Lưu thông tin kệ sách thành công");
@@ -109,6 +126,8 @@ public class BookshelfDialog extends javax.swing.JDialog {
     }
     
     public void addEvent() {
+        if(!validateInputs())
+            return;
         bookshelf = getNewBookshelf();
         if(bookshelfBUS.add(bookshelf)) {
             JOptionPane.showMessageDialog(null, "Thêm kệ sách thành công");
@@ -178,9 +197,9 @@ public class BookshelfDialog extends javax.swing.JDialog {
         btn_edit.setIcon(new FlatSVGIcon("./svg/icon/pen.svg")
         );
         btn_edit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btn_edit.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                btn_editMousePressed(evt);
+        btn_edit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editActionPerformed(evt);
             }
         });
 
@@ -268,10 +287,10 @@ public class BookshelfDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_editMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_editMousePressed
+    private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
         txt_name.setFocusable(true);
         btn_edit.setEnabled(false);
-    }//GEN-LAST:event_btn_editMousePressed
+    }//GEN-LAST:event_btn_editActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_edit;

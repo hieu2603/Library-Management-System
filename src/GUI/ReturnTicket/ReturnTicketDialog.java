@@ -249,7 +249,17 @@ public class ReturnTicketDialog extends javax.swing.JDialog {
         }
     }
     
+    public boolean validateInputs() {
+        if(Validator.isEmpty(txt_member.getText())) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn thành viên");
+            return false;
+        }
+        return true;
+    }
+    
     public void addEvent() {
+        if(!validateInputs())
+            return;
         if(jTable1.getRowCount() == 0){
             JOptionPane.showMessageDialog(this, "Phải có ít nhất 1 sách để tạo phiếu trả!");
             return;
