@@ -183,6 +183,10 @@ public final class PermissionDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên nhóm quyền");
             return false;
         }
+        if(getPermissionDetailList(1).isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Bạn cần chọn ít nhất 1 quyền");
+            return false;
+        }
         return true;
     }
     

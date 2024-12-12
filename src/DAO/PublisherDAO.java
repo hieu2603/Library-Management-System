@@ -128,7 +128,7 @@ public class PublisherDAO {
         boolean result = false;
         try {
             Connection conn = Database.getConnection();
-            String checkQuery = "SELECT COUNT(*) FROM book WHERE supplier_id = ?";
+            String checkQuery = "SELECT COUNT(*) FROM book WHERE publisher_id = ?";
             PreparedStatement ps = conn.prepareStatement(checkQuery);
 
             ps.setInt(1, id);

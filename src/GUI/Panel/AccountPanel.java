@@ -181,7 +181,7 @@ public class AccountPanel extends javax.swing.JPanel {
         int index = tablePanel.table.getSelectedRow();
         int id = (int) tablePanel.table.getValueAt(index, 0);
         if(accountBUS.delete(id)) {
-            JOptionPane.showMessageDialog(null, "Xóa nhà cung cấp thành công");
+            JOptionPane.showMessageDialog(null, "Xóa tài khoản thành công");
         }
         refreshTable();
     }
