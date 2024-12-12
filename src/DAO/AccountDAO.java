@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -101,7 +102,7 @@ public class AccountDAO {
         try {
             Connection connection = Database.getConnection();
 
-            String query = "SELECT username, password FROM account WHERE username = ? AND password = ?";
+            String query = "SELECT username, password, status FROM account WHERE username = ? AND password = ? ";
             PreparedStatement ps = connection.prepareStatement(query);
 
             ps.setString(1, username);
@@ -110,7 +111,12 @@ public class AccountDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                result = true;
+                if(rs.getString("status").equals("Ngừng hoạt động")) {
+                    JOptionPane.showMessageDialog(null, "Tài khoản đang bị khóa");
+                    result = false;
+                } else {
+                    result = true;
+                }
             }
 
             Database.closeConnection(connection);
@@ -120,6 +126,39 @@ public class AccountDAO {
         }
 
         return result;
+    }
+    
+    public AccountDTO getByUsernameAndPassword(String username, String password) {
+        AccountDTO account = null;
+        
+        try {
+            Connection connection = Database.getConnection();
+            
+            String query = "SELECT * FROM account WHERE username = ? AND password = ? ";
+            
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, password); 
+            
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                int account_id = rs.getInt("account_id");
+                String username1 = rs.getString("username");
+                String password1 = rs.getString("password");
+                int permission_id = rs.getInt("permission_id");
+                String status = rs.getString("status");
+                int staff_id = rs.getInt("staff_id");
+                
+                account = new AccountDTO(account_id, username1, password1, permission_id, status, staff_id);
+            }
+            
+            Database.closeConnection(connection); 
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        
+        return account;
     }
 
     public boolean searchAccount(String username) {
@@ -245,21 +284,60 @@ public class AccountDAO {
     }
     
     public static boolean isUsernameDuplicate(String username) {
-    String query = "SELECT 1 FROM account WHERE username = ? LIMIT 1";
-    
-    try (Connection conn = Database.getConnection();
-         PreparedStatement ps = conn.prepareStatement(query)) {
-        
-        ps.setString(1, username);
-        
-        try (ResultSet rs = ps.executeQuery()) {
-            return rs.next(); // Nếu có kết quả, username đã tồn tại.
+        String query = "SELECT 1 FROM account WHERE username = ? LIMIT 1";
+
+        try (Connection conn = Database.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // Nếu có kết quả, username đã tồn tại.
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log lỗi nếu có
         }
-        
-    } catch (SQLException e) {
-        e.printStackTrace(); // Log lỗi nếu có
+        return false; // Trả về false nếu không tìm thấy username
     }
-    return false; // Trả về false nếu không tìm thấy username
-}
+    
+    public boolean checkStaffExisted(int id) {
+        boolean result = false;
+        try {
+            Connection conn = Database.getConnection();
+            String checkQuery = "SELECT COUNT(*) FROM account WHERE staff_id = ?";
+            PreparedStatement ps = conn.prepareStatement(checkQuery);
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                result = true;
+            }
+            Database.closeConnection(conn);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+    
+    public int delete(int id) {
+        int result = 0;
+        try {
+            Connection conn = Database.getConnection();
+            String deleteQuery = "DELETE FROM account WHERE account_id = ? ";
+            PreparedStatement ps = conn.prepareStatement(deleteQuery);
+
+            ps.setInt(1, id);
+            result = ps.executeUpdate();
+
+            Database.closeConnection(conn);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+    
 }
 

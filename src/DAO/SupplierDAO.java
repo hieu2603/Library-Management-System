@@ -65,22 +65,19 @@ public class SupplierDAO {
 
         return result; // Trả về số hàng đã cập nhật
     }
-
-    public int delete(int supplier_id) {
-        int result = 0;
+    
+    public boolean checkDelete(int supplier_id) {
+        boolean result = false;
         try {
             Connection conn = Database.getConnection();
-            String checkQuery = "SELECT COUNT (*) FROM borrowticket WHERE supplier_id = ?";
-            String deleteQuery = "DELETE FROM supplier WHERE supplier_id = ? ";
-            PreparedStatement ps1 = conn.prepareStatement(checkQuery);
-            PreparedStatement ps2 = conn.prepareStatement(deleteQuery);
+            String checkQuery = "SELECT COUNT(*) FROM purchaseticket WHERE supplier_id = ?";
+            PreparedStatement ps = conn.prepareStatement(checkQuery);
 
-            ps1.setInt(1, supplier_id);
-            ResultSet rs = ps1.executeQuery();
+            ps.setInt(1, supplier_id);
+            ResultSet rs = ps.executeQuery();
 
             if (rs.next() && rs.getInt(1) == 0) {
-                ps2.setInt(1, supplier_id);
-                result = ps2.executeUpdate();
+                result = true;
             }
             Database.closeConnection(conn);
 
@@ -89,6 +86,25 @@ public class SupplierDAO {
         }
         return result;
     }
+
+    public int delete(int supplier_id) {
+        int result = 0;
+        try {
+            Connection conn = Database.getConnection();
+            String deleteQuery = "DELETE FROM supplier WHERE supplier_id = ? ";
+            PreparedStatement ps = conn.prepareStatement(deleteQuery);
+
+            ps.setInt(1, supplier_id);
+            result = ps.executeUpdate();
+
+            Database.closeConnection(conn);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+    
     public SupplierDTO getSupplierById(int id) {
         SupplierDTO supplier = null;
         try {

@@ -7,6 +7,7 @@ package BUS;
 import DAO.SupplierDAO;
 import DTO.SupplierDTO;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -29,6 +30,10 @@ public class SupplierBUS {
     }
 
     public boolean delete(int id) {
+        if(!supplierDAO.checkDelete(id)) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa nhà cung cấp này");
+            return false;
+        }
         return supplierDAO.delete(id) > 0;
     }
 

@@ -83,6 +83,10 @@ public class AccountDialog extends javax.swing.JDialog {
             staff = GetStaffDialog.getStaff();
             if(staff == null)
                 return;
+            if(accountBUS.checkStaffExisted(staff.getId())) {
+                JOptionPane.showMessageDialog(null, "Nhân viên này đã có tài khoản");
+                return;
+            }
             txt_staff.setText(staff.getFullName());
         });
         
@@ -188,7 +192,7 @@ public class AccountDialog extends javax.swing.JDialog {
         }
         
         if(accountBUS.isUsernameDuplicate(txt_username.getText())){
-            JOptionPane.showMessageDialog(this, "Tên đăng nhập đã có sẵn");
+            JOptionPane.showMessageDialog(this, "Tên đăng nhập đã tồn tại");
             return false;
         }
         

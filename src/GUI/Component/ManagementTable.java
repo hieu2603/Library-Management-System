@@ -104,9 +104,6 @@ public class ManagementTable extends javax.swing.JPanel {
         table.getTableHeader().setResizingAllowed(false);
         table.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(table);
-        if (table.getColumnModel().getColumnCount() > 0) {
-            table.getColumnModel().getColumn(4).setCellEditor(null);
-        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -133,9 +130,9 @@ public class ManagementTable extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JMenuItem deleteOption;
-    private javax.swing.JPopupMenu jPopupMenu1;
+    public javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
+    public javax.swing.JPopupMenu.Separator jSeparator1;
     public javax.swing.JTable table;
     public javax.swing.JMenuItem viewOption;
     // End of variables declaration//GEN-END:variables

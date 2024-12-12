@@ -6,11 +6,13 @@ package GUI.Panel;
 
 import BUS.PermissionBUS;
 import DTO.PermissionDTO;
+import DTO.SessionManager;
 import GUI.Component.ManagementTable;
 import GUI.Component.MenuBar;
 import GUI.Component.MenuBarButton;
 import GUI.Main_Frame;
 import GUI.Permission.PermissionDialog;
+import config.Constants;
 import helper.JTableExporter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -34,6 +36,7 @@ public class PermissionPanel extends javax.swing.JPanel {
     
     Main_Frame main;
     
+    int functionId = Constants.functions.get("Quản lý phân quyền");
     String[] searchTypes = {"Tất cả", "Mã nhóm quyền", "Tên nhóm quyền"};
 
     ManagementTable tablePanel = new ManagementTable();
@@ -100,6 +103,17 @@ public class PermissionPanel extends javax.swing.JPanel {
             }
         });
         
+        tablePanel.deleteOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tablePanel.table.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhóm quyền nào");
+                    return;
+                }
+                deleteEvent();
+            }
+        });
+        
         menuBar.txt_search.addKeyListener(new KeyAdapter(){
             @Override
             public void keyReleased(KeyEvent e) {
@@ -114,6 +128,10 @@ public class PermissionPanel extends javax.swing.JPanel {
             }
         });
         
+        if(!SessionManager.getInstance().permissionCheck(functionId, "delete")) {
+            tablePanel.jPopupMenu1.remove(tablePanel.jSeparator1);
+            tablePanel.jPopupMenu1.remove(tablePanel.deleteOption);
+        }
     }
     
     public void loadDataToTable(ArrayList<PermissionDTO> permissionList) {
@@ -154,6 +172,15 @@ public class PermissionPanel extends javax.swing.JPanel {
         PermissionDTO p = permissionBUS.getById(id);
         PermissionDialog pmD = new PermissionDialog(null, p, true);
         pmD.setVisible(true);
+        refreshTable();
+    }
+    
+    public void deleteEvent() {
+        int index = tablePanel.table.getSelectedRow();
+        int id = (int) tablePanel.table.getValueAt(index, 0);
+        if(permissionBUS.delete(id)) {
+            JOptionPane.showMessageDialog(null, "Xóa nhóm quyền thành công");
+        }
         refreshTable();
     }
         

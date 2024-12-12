@@ -8,11 +8,13 @@ import BUS.AccountBUS;
 import BUS.PermissionBUS;
 import BUS.StaffBUS;
 import DTO.AccountDTO;
+import DTO.SessionManager;
 import GUI.Account.AccountDialog;
 import GUI.Component.ManagementTable;
 import GUI.Component.MenuBar;
 import GUI.Component.MenuBarButton;
 import GUI.Main_Frame;
+import config.Constants;
 import helper.JTableExporter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -36,6 +38,7 @@ public class AccountPanel extends javax.swing.JPanel {
 
     Main_Frame main;
     
+    int functionId = Constants.functions.get("Quản lý tài khoản");
     String[] searchTypes = {"Tất cả", "Mã tài khoản", "Tên nhân viên", "Tên tài khoản", "Nhóm quyền", "Trạng thái"};
     
     ManagementTable tablePanel = new ManagementTable();
@@ -97,6 +100,17 @@ public class AccountPanel extends javax.swing.JPanel {
             }
         });
         
+        tablePanel.deleteOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tablePanel.table.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào");
+                    return;
+                }
+                deleteEvent();
+            }
+        });
+        
         menuBar.txt_search.addKeyListener(new KeyAdapter(){
             @Override
             public void keyReleased(KeyEvent e) {
@@ -111,6 +125,10 @@ public class AccountPanel extends javax.swing.JPanel {
             }
         });
         
+        if(!SessionManager.getInstance().permissionCheck(functionId, "delete")) {
+            tablePanel.jPopupMenu1.remove(tablePanel.jSeparator1);
+            tablePanel.jPopupMenu1.remove(tablePanel.deleteOption);
+        }
     }
     
     public void loadDataToTable(ArrayList<AccountDTO> accountList) {
@@ -133,6 +151,11 @@ public class AccountPanel extends javax.swing.JPanel {
         loadDataToTable(accountBUS.search(searchText, type));
     }
     
+    public void refreshTable() {
+        accountList = accountBUS.getAll();
+        loadDataToTable(accountList);
+    }
+    
     public void viewEvent() {
         int index = tablePanel.table.getSelectedRow();
         int id = (int) tablePanel.table.getValueAt(index, 0);
@@ -152,6 +175,15 @@ public class AccountPanel extends javax.swing.JPanel {
         aD.setVisible(true);
         accountList = accountBUS.getAll();
         loadDataToTable(accountList);
+    }
+    
+    public void deleteEvent() {
+        int index = tablePanel.table.getSelectedRow();
+        int id = (int) tablePanel.table.getValueAt(index, 0);
+        if(accountBUS.delete(id)) {
+            JOptionPane.showMessageDialog(null, "Xóa nhà cung cấp thành công");
+        }
+        refreshTable();
     }
     
     @SuppressWarnings("unchecked")

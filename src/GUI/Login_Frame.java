@@ -13,6 +13,7 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import config.Database;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -127,6 +128,9 @@ public class Login_Frame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_ButtonActionPerformed
+        if(!Database.checkConnection())
+            return;
+        
         String username = username_TextField.getText();
         char[] password = password_TextField.getPassword();
         String passwordStr = new String(password);
@@ -140,20 +144,21 @@ public class Login_Frame extends javax.swing.JFrame {
             return;
         }
         
-        if (accountBUS.checkLogIn(username, passwordStr)) {
-            // Tạo session đăng nhập cho tài khoản
-            AccountDTO account = accountBUS.getAccountByUsername(username);
-            SessionManager.getInstance().setLoggedInAccount(account);
-            StaffDTO staff = staffBUS.getById(account.getStaff_id());
-            SessionManager.getInstance().setLoggedInStaff(staff);
-
-            new Main_Frame().setVisible(true);
-//            new Home_Frame().setVisible(true);
-            this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Mật khẩu hoặc tài khoản không chính xác!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        AccountDTO account = accountBUS.getByUsernameAndPassword(username, passwordStr);
+        if (account == null) {
+            JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        if (account.getStatus().equals("Ngừng hoạt động")) {
+            JOptionPane.showMessageDialog(this, "Tài khoản đang bị khóa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        SessionManager.getInstance().setLoggedInAccount(account);
+        StaffDTO staff = staffBUS.getById(account.getStaff_id());
+        SessionManager.getInstance().setLoggedInStaff(staff);
 
+        new Main_Frame().setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_login_ButtonActionPerformed
 
     /**
@@ -194,10 +199,8 @@ public class Login_Frame extends javax.swing.JFrame {
             System.out.println(e);
         }
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Login_Frame().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Login_Frame().setVisible(true);
         });
     }
 

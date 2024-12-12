@@ -12,12 +12,12 @@ import javax.swing.JOptionPane;
  */
 public class InputGetter {
 
-    public static int getNumberInput(String text) {
+    public static Integer getIntegerInput(String text) {
         int result;
         try {
             String input = JOptionPane.showInputDialog("Nhập " + text);
             if (input == null) {
-                return 0;
+                return null;
             }
             result = Integer.parseInt(input);
             if (result <= 0) {
@@ -31,6 +31,26 @@ public class InputGetter {
             return 0;
         }
     }
+    
+    public static Long getLongInput(String text) {
+        Long result;
+        try {
+            String input = JOptionPane.showInputDialog("Nhập " + text);
+            if (input == null) {
+                return null;
+            }
+            result = Long.valueOf(input);
+            if (result <= 0) {
+                JOptionPane.showMessageDialog(null, text + " phải là số lớn hơn 0");
+                return Long.valueOf(0);
+            } else {
+                return result;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, text + " phải là số lớn hơn 0");
+            return Long.valueOf(0);
+        }
+    }
 
     public static String getStringInput(String text) {
         String result = "";
@@ -41,8 +61,8 @@ public class InputGetter {
             }
             if (result.equals("")) {
                 JOptionPane.showMessageDialog(null, text + " không được để trống");
+                return "";
             }
-
         }
         return result;
     }

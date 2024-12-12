@@ -154,8 +154,6 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
         jLabel7.setText("TẠO PHIẾU PHẠT MỚI");
         lbl_id.setEnabled(false);
         txt_id.setEnabled(false);
-        lbl_status.setEnabled(false);
-        txt_status.setEnabled(false);
 
         txt_staff.setText(staff.getFullName());
         txt_penaltyDate.setText(Formatter.getDate(penalty_date));
@@ -254,8 +252,6 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
         txt_staff = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txt_penaltyDate = new javax.swing.JTextField();
-        lbl_status = new javax.swing.JLabel();
-        txt_status = new javax.swing.JTextField();
         btn_member = new javax.swing.JButton();
         lbl_id1 = new javax.swing.JLabel();
         txt_ticketId = new javax.swing.JTextField();
@@ -294,10 +290,6 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
         jLabel4.setText("Ngày phạt");
 
         txt_penaltyDate.setFocusable(false);
-
-        lbl_status.setText("Trạng thái");
-
-        txt_status.setFocusable(false);
 
         btn_member.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
         btn_member.setText("...");
@@ -353,8 +345,6 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
                 .addGap(47, 47, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(lbl_status)
-                    .addComponent(txt_status, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_penaltyDate, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(22, 22, 22))
         );
@@ -382,15 +372,10 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(7, 7, 7)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txt_staff, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(lbl_status)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txt_status, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_staff, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(btn_getTicket, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(txt_ticketId, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))))
@@ -547,13 +532,11 @@ public class PenaltyTicketDialog extends javax.swing.JDialog {
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbl_id;
     private javax.swing.JLabel lbl_id1;
-    private javax.swing.JLabel lbl_status;
     private javax.swing.JLabel lbl_status1;
     private javax.swing.JTextField txt_id;
     private javax.swing.JTextField txt_member;
     private javax.swing.JTextField txt_penaltyDate;
     private javax.swing.JTextField txt_staff;
-    private javax.swing.JTextField txt_status;
     private javax.swing.JTextField txt_ticketId;
     private javax.swing.JTextField txt_totalFine;
     // End of variables declaration//GEN-END:variables

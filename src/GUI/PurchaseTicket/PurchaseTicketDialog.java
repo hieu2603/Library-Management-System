@@ -27,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -49,7 +50,7 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
     ArrayList<PurchaseTicketDetailDTO> detailList;
     ArrayList<BookItemDTO> bookItemList;
 
-    private HashMap<Integer, String> isbnList = new HashMap<>();
+    private final HashMap<Integer, String> isbnList = new HashMap<>();
 
     public PurchaseTicketDialog(java.awt.Frame parent, boolean modal, PurchaseTicketDTO purchaseTicket, String mode) {
         super(parent, modal);
@@ -161,26 +162,30 @@ public class PurchaseTicketDialog extends javax.swing.JDialog {
 
             int ticket_id = purchaseTicketBUS.getLastID() + 1;
             int book_id = book.getId();
-            int quantity = InputGetter.getNumberInput("Số lượng sách");
             
-            if (quantity == 0) {
-                return;
+            Integer quantity = 0; 
+            while(quantity == 0) {
+                quantity = InputGetter.getIntegerInput("Số lượng sách");
+                if(quantity == null)
+                    return;
             }
             
-            long price = InputGetter.getNumberInput("Đơn giá");
-            
-            if (price == 0) {
-                return;
+            Long price = Long.valueOf(0);
+            while(Objects.equals(price, Long.valueOf(0))) {
+                price = InputGetter.getLongInput("Đơn giá");
+                if(price == null)
+                    return;
             }
 
-            String isbn;
-            isbn = InputGetter.getStringInput("ISBN");
-            if (isbn == null) {
-                return;
-            }
-            if (!Validator.isValidISBN(isbn)) {
-                JOptionPane.showMessageDialog(this, "ISBN phải là số có 11 chữ số và không bắt đầu bằng số 0");
-                return;
+            String isbn = "";
+            while (isbn.equals("")) {
+                isbn = InputGetter.getStringInput("ISBN");
+                if (isbn == null)
+                    return;
+                if (!Validator.isValidISBN(isbn)) {
+                    JOptionPane.showMessageDialog(this, "ISBN phải là số có 11 chữ số và không bắt đầu bằng số 0");
+                    isbn = "";
+                }
             }
 
             isbnList.put(book.getId(), isbn);

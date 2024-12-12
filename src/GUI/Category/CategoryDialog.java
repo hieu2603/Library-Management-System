@@ -103,6 +103,8 @@ public class CategoryDialog extends javax.swing.JDialog {
         jPopupMenu2 = new javax.swing.JPopupMenu();
         option_add = new javax.swing.JMenuItem();
         option_update = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        option_delete = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -127,6 +129,16 @@ public class CategoryDialog extends javax.swing.JDialog {
             }
         });
         jPopupMenu2.add(option_update);
+        jPopupMenu2.add(jSeparator2);
+
+        option_delete.setForeground(new java.awt.Color(255, 51, 51));
+        option_delete.setText("Xóa");
+        option_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                option_deleteActionPerformed(evt);
+            }
+        });
+        jPopupMenu2.add(option_delete);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -266,6 +278,15 @@ public class CategoryDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_option_updateActionPerformed
 
+    private void option_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option_deleteActionPerformed
+        int index = jTable1.getSelectedRow();
+        int id = (int) jTable1.getValueAt(index, 0);
+        if(categoryBUS.delete(id)) {
+            JOptionPane.showMessageDialog(null, "Xóa danh mục thành công");
+        }
+        refreshTable();
+    }//GEN-LAST:event_option_deleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_choose;
@@ -274,8 +295,10 @@ public class CategoryDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTable jTable1;
     private javax.swing.JMenuItem option_add;
+    private javax.swing.JMenuItem option_delete;
     private javax.swing.JMenuItem option_update;
     // End of variables declaration//GEN-END:variables
 }
