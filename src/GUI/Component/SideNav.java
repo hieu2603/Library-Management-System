@@ -12,6 +12,7 @@ import DTO.PermissionDTO;
 import DTO.PermissionDetailDTO;
 import DTO.SessionManager;
 import DTO.StaffDTO;
+import GUI.Account.ChangePasswordDialog;
 import GUI.Login_Frame;
 import GUI.Main_Frame;
 import com.formdev.flatlaf.FlatClientProperties;
@@ -150,7 +151,14 @@ public class SideNav extends javax.swing.JPanel {
         }
     }
     
-
+    public void changePasswordEvent() {
+        ChangePasswordDialog cpD = new ChangePasswordDialog(null, true, account);
+        cpD.setVisible(true);
+        if(cpD.changed == true) {
+            main.dispose();
+            new Login_Frame().setVisible(true);
+        }
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -177,11 +185,29 @@ public class SideNav extends javax.swing.JPanel {
 
         lbl_staffName.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbl_staffName.setText("Tên nhân viên");
+        lbl_staffName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_staffName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                user_iconMousePressed(evt);
+            }
+        });
 
         lbl_permissionName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lbl_permissionName.setText("Tên nhóm quyền");
+        lbl_permissionName.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbl_permissionName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                user_iconMousePressed(evt);
+            }
+        });
 
+        user_icon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         user_icon.setPreferredSize(new java.awt.Dimension(50, 50));
+        user_icon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                user_iconMousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -226,6 +252,10 @@ public class SideNav extends javax.swing.JPanel {
         bottomPanel.setPreferredSize(new java.awt.Dimension(300, 60));
         add(bottomPanel, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void user_iconMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_user_iconMousePressed
+        changePasswordEvent();
+    }//GEN-LAST:event_user_iconMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

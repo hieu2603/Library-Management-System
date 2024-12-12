@@ -31,8 +31,16 @@ public class AccountBUS {
         return accountDAO.editStatus(id, status) > 0;
     }
 
+     public boolean delete(int id) {
+        return accountDAO.delete(id) > 0;
+    }
+    
     public boolean checkLogIn(String username, String password) {
         return accountDAO.checkLogIn(username, password);
+    }
+    
+    public boolean checkStaffExisted(int id) {
+        return accountDAO.checkStaffExisted(id);
     }
 
     public AccountDTO getById(int id) {
@@ -41,6 +49,10 @@ public class AccountBUS {
 
     public AccountDTO getAccountByUsername(String username) {
         return accountDAO.getByUsername(username);
+    }
+    
+    public AccountDTO getByUsernameAndPassword(String username, String password) {
+        return accountDAO.getByUsernameAndPassword(username, password);
     }
 
     public ArrayList<AccountDTO> getAll() {

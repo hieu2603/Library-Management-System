@@ -3,9 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/Panel/SupplierPanel.java</file>
-            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/Panel/PublisherPanel.java</file>
-            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/Panel/BookPanel.java</file>
+            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/Panel/PurchasePanel.java</file>
+            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/Permission/PermissionDialog.java</file>
+            <file>file:/D:/Workspace/Projects/Library-Management-System/src/GUI/Member/MemberDialog.java</file>
         </group>
     </open-files>
 </project-private>

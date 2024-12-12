@@ -6,11 +6,13 @@ package GUI.Panel;
 
 import BUS.PublisherBUS;
 import DTO.PublisherDTO;
+import DTO.SessionManager;
 import GUI.Component.ManagementTable;
 import GUI.Component.MenuBar;
 import GUI.Component.MenuBarButton;
 import GUI.Main_Frame;
 import GUI.Publisher.PublisherDialog;
+import config.Constants;
 import helper.JTableExporter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -34,6 +36,7 @@ public class PublisherPanel extends javax.swing.JPanel {
     
     Main_Frame main;
     
+    int functionId = Constants.functions.get("Quản lý nhà xuất bản");
     String[] searchTypes = {"Tất cả", "Mã nhà xuất bản", "Tên", "Địa chỉ", "Số điện thoại"};
 
     ManagementTable tablePanel = new ManagementTable();
@@ -101,6 +104,17 @@ public class PublisherPanel extends javax.swing.JPanel {
             }
         });
         
+        tablePanel.deleteOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tablePanel.table.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà xuất bản nào");
+                    return;
+                }
+                deleteEvent();
+            }
+        });
+        
         menuBar.txt_search.addKeyListener(new KeyAdapter(){
             @Override
             public void keyReleased(KeyEvent e) {
@@ -115,6 +129,10 @@ public class PublisherPanel extends javax.swing.JPanel {
             }
         });
         
+        if(!SessionManager.getInstance().permissionCheck(functionId, "delete")) {
+            tablePanel.jPopupMenu1.remove(tablePanel.jSeparator1);
+            tablePanel.jPopupMenu1.remove(tablePanel.deleteOption);
+        }
     }
     
     public void loadDataToTable(ArrayList<PublisherDTO> publisherList) {
@@ -153,6 +171,15 @@ public class PublisherPanel extends javax.swing.JPanel {
     public void addEvent() {
         PublisherDialog pD = new PublisherDialog(null, true, null, "add");
         pD.setVisible(true);
+        refreshTable();
+    }
+    
+    public void deleteEvent() {
+        int index = tablePanel.table.getSelectedRow();
+        int id = (int) tablePanel.table.getValueAt(index, 0);
+        if(publisherBUS.delete(id)) {
+            JOptionPane.showMessageDialog(null, "Xóa nhà xuất bản thành công");
+        }
         refreshTable();
     }
     

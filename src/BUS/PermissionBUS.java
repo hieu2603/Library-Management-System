@@ -9,6 +9,7 @@ import DAO.PermissionDetailDAO;
 import DTO.PermissionDTO;
 import DTO.PermissionDetailDTO;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,6 +42,14 @@ public class PermissionBUS {
             return true;
         }
         return false;
+    }
+    
+    public boolean delete(int id) {
+        if(!permissionDAO.checkDelete(id)) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa nhóm quyền này");
+            return false;
+        }
+        return permissionDAO.delete(id) > 0;
     }
     
     public int addReturnId(PermissionDTO permission) {

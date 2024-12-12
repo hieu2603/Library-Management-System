@@ -120,6 +120,8 @@ public class PurchasePanel extends javax.swing.JPanel {
             }
         });
         
+        tablePanel.jPopupMenu1.remove(tablePanel.jSeparator1);
+        tablePanel.jPopupMenu1.remove(tablePanel.deleteOption);
     }
     
     public void loadDataToTable(ArrayList<PurchaseTicketDTO> purchaseTicketList) {
@@ -160,6 +162,7 @@ public class PurchasePanel extends javax.swing.JPanel {
         PurchaseTicketDialog ptD = new PurchaseTicketDialog(null, true, null, "add");
         ptD.setVisible(true);
         refreshTable();
+        main.bookPanel.refreshTable();
     }
     
     @SuppressWarnings("unchecked")

@@ -121,6 +121,8 @@ public class BookPanel extends javax.swing.JPanel {
             }
         });
         
+        tablePanel.jPopupMenu1.remove(tablePanel.jSeparator1);
+        tablePanel.jPopupMenu1.remove(tablePanel.deleteOption);
     }
     
     public void loadDataToTable(ArrayList<BookDTO> bookList) {

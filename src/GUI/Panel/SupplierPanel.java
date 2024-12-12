@@ -5,12 +5,14 @@
 package GUI.Panel;
 
 import BUS.SupplierBUS;
+import DTO.SessionManager;
 import DTO.SupplierDTO;
 import GUI.Component.ManagementTable;
 import GUI.Component.MenuBar;
 import GUI.Component.MenuBarButton;
 import GUI.Main_Frame;
 import GUI.Supplier.SupplierDialog;
+import config.Constants;
 import helper.JTableExporter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -34,6 +36,7 @@ public class SupplierPanel extends javax.swing.JPanel {
     
     Main_Frame main;
     
+    int functionId = Constants.functions.get("Quản lý kệ sách");
     String[] searchTypes = {"Tất cả", "Mã nhà cung cấp", "Tên", "Địa chỉ", "Số điện thoại"};
 
     ManagementTable tablePanel = new ManagementTable();
@@ -101,6 +104,17 @@ public class SupplierPanel extends javax.swing.JPanel {
             }
         });
         
+        tablePanel.deleteOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tablePanel.table.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn nhà cung cấp nào");
+                    return;
+                }
+                deleteEvent();
+            }
+        });
+        
         menuBar.txt_search.addKeyListener(new KeyAdapter(){
             @Override
             public void keyReleased(KeyEvent e) {
@@ -114,7 +128,11 @@ public class SupplierPanel extends javax.swing.JPanel {
                 searchEvent();
             }
         });
-        
+    
+        if(!SessionManager.getInstance().permissionCheck(functionId, "delete")) {
+            tablePanel.jPopupMenu1.remove(tablePanel.jSeparator1);
+            tablePanel.jPopupMenu1.remove(tablePanel.deleteOption);
+        }
     }
     
     public void loadDataToTable(ArrayList<SupplierDTO> supplierList) {
@@ -153,6 +171,15 @@ public class SupplierPanel extends javax.swing.JPanel {
     public void addEvent() {
         SupplierDialog sD = new SupplierDialog(null, true, null, "add");
         sD.setVisible(true);
+        refreshTable();
+    }
+    
+    public void deleteEvent() {
+        int index = tablePanel.table.getSelectedRow();
+        int id = (int) tablePanel.table.getValueAt(index, 0);
+        if(supplierBUS.delete(id)) {
+            JOptionPane.showMessageDialog(null, "Xóa nhà cung cấp thành công");
+        }
         refreshTable();
     }
     
