@@ -7,6 +7,7 @@ package BUS;
 import DAO.CategoryDAO;
 import DTO.CategoryDTO;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -38,6 +39,14 @@ public class CategoryBUS {
     
     public boolean update(CategoryDTO category) {
         return categoryDAO.update(category) > 0;
+    }
+    
+    public boolean delete(int id) {
+        if(!categoryDAO.checkDelete(id)) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa danh mục này");
+            return false;
+        }
+        return categoryDAO.delete(id) > 0;
     }
     
 }

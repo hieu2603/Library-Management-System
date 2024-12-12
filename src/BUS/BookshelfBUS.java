@@ -7,6 +7,7 @@ package BUS;
 import DAO.BookshelfDAO;
 import DTO.BookshelfDTO;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -34,6 +35,14 @@ public class BookshelfBUS {
     
     public boolean update(BookshelfDTO bookshelf) {
         return bookshelfDAO.update(bookshelf) != 0;
+    }
+    
+    public boolean delete(int id) {
+        if(!bookshelfDAO.checkDelete(id)) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa kệ sách này");
+            return false;
+        }
+        return bookshelfDAO.delete(id) > 0;
     }
     
     public ArrayList<BookshelfDTO> search(String text, String type) {

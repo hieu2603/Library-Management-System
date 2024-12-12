@@ -14,6 +14,7 @@ import DTO.PermissionDetailDTO;
 import DTO.SessionManager;
 import config.Constants;
 import helper.Validator;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -95,13 +96,18 @@ public final class PermissionDialog extends javax.swing.JDialog {
         }
     
         enablingForm(false);
-        if(permission == null) {
+        if (permission == null) {
             jLabel2.setText("THÊM QUYỀN MỚI");
             enablingForm(true);
+            //Giấu nút sửa
+            btn_edit.setEnabled(false);
+            btn_edit.setText("");
+            btn_edit.setBorder(null);
+            btn_edit.setBackground(new Color(240, 240, 240));
         }
         else {
             if(!SessionManager.getInstance().permissionCheck(functionId, "edit"))
-            jButton3.setEnabled(false);
+            btn_edit.setEnabled(false);
         }
     }
     
@@ -144,12 +150,20 @@ public final class PermissionDialog extends javax.swing.JDialog {
                         checkBoxList[i][j].setEnabled(false);
                 }
                 if(
-                        functionList.get(i).getName().equals("Quản lý mượn sách")
+                        functionList.get(i).getName().equals("Quản lý sách")
+                        || functionList.get(i).getName().equals("Quản lý mượn sách")
                         || functionList.get(i).getName().equals("Quản lý trả sách")
                         || functionList.get(i).getName().equals("Quản lý nhập sách")
                         || functionList.get(i).getName().equals("Quản lý vi phạm")
                         ) {
                     if(actionKey[j].equals("edit") || actionKey[j].equals("delete"))
+                        checkBoxList[i][j].setEnabled(false);
+                }
+                if(
+                        functionList.get(i).getName().equals("Quản lý nhân viên")
+                        || functionList.get(i).getName().equals("Quản lý thành viên")
+                        ) {
+                    if(actionKey[j].equals("delete"))
                         checkBoxList[i][j].setEnabled(false);
                 }
             }
@@ -237,7 +251,7 @@ public final class PermissionDialog extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btn_edit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(600, 600));
@@ -339,17 +353,17 @@ public final class PermissionDialog extends javax.swing.JDialog {
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(255, 215, 64));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Sửa");
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton3.setFocusPainted(false);
-        jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        jButton3.setPreferredSize(new java.awt.Dimension(80, 30));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btn_edit.setBackground(new java.awt.Color(255, 215, 64));
+        btn_edit.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btn_edit.setForeground(new java.awt.Color(255, 255, 255));
+        btn_edit.setText("Sửa");
+        btn_edit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_edit.setFocusPainted(false);
+        btn_edit.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        btn_edit.setPreferredSize(new java.awt.Dimension(80, 30));
+        btn_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btn_editActionPerformed(evt);
             }
         });
 
@@ -361,7 +375,7 @@ public final class PermissionDialog extends javax.swing.JDialog {
                 .addGap(162, 162, 162)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_edit, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(162, Short.MAX_VALUE))
@@ -373,7 +387,7 @@ public final class PermissionDialog extends javax.swing.JDialog {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_edit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -395,17 +409,17 @@ public final class PermissionDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_jButton2MousePressed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
         enablingForm(true);
-        jButton3.setEnabled(false);
-    }//GEN-LAST:event_jButton3ActionPerformed
+        btn_edit.setEnabled(false);
+    }//GEN-LAST:event_btn_editActionPerformed
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_edit;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

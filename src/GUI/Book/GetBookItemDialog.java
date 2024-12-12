@@ -57,7 +57,7 @@ public class GetBookItemDialog extends javax.swing.JDialog {
             }
         });
         
-        bookList = bookBUS.getAll();
+        bookList = bookBUS.getAllHavingBookItem();
         loadBookToTable(bookList);
         
     }
@@ -78,11 +78,12 @@ public class GetBookItemDialog extends javax.swing.JDialog {
         DefaultTableModel tableModel = (DefaultTableModel) tbl_item.getModel();
         tableModel.setRowCount(0);
         for (BookItemDTO i : itemList) {
-            if(i.getStatus().equals("Đang mượn")) continue;
-            tableModel.addRow(new Object[] {
-                    i.getIsbn(),
-                    i.getStatus(),
-            });
+            if(i.getStatus().equals("Có sẵn")) {
+                tableModel.addRow(new Object[] {
+                        i.getIsbn(),
+                        i.getStatus(),
+                });
+            }
         }
     }
 

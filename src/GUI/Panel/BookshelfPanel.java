@@ -6,11 +6,13 @@ package GUI.Panel;
 
 import BUS.BookshelfBUS;
 import DTO.BookshelfDTO;
+import DTO.SessionManager;
 import GUI.Bookshelf.BookshelfDialog;
 import GUI.Component.ManagementTable;
 import GUI.Component.MenuBar;
 import GUI.Component.MenuBarButton;
 import GUI.Main_Frame;
+import config.Constants;
 import helper.JTableExporter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -34,6 +36,7 @@ public class BookshelfPanel extends javax.swing.JPanel {
 
     Main_Frame main;
     
+    int functionId = Constants.functions.get("Quản lý kệ sách");
     String[] searchTypes = {"Tất cả", "Mã kệ sách", "Tên kệ sách"};
     
     ManagementTable tablePanel = new ManagementTable();
@@ -114,6 +117,21 @@ public class BookshelfPanel extends javax.swing.JPanel {
             }
         });
         
+        tablePanel.deleteOption.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tablePanel.table.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn kệ sách nào");
+                    return;
+                }
+                deleteEvent();
+            }
+        });
+        
+        if(!SessionManager.getInstance().permissionCheck(functionId, "delete")) {
+            tablePanel.jPopupMenu1.remove(tablePanel.jSeparator1);
+            tablePanel.jPopupMenu1.remove(tablePanel.deleteOption);
+        }
     }
     
     public void loadDataToTable(ArrayList<BookshelfDTO> bookshelfList) {
@@ -152,7 +170,15 @@ public class BookshelfPanel extends javax.swing.JPanel {
         bD.setVisible(true);
         refreshTable();
     }
-
+    
+    public void deleteEvent() {
+        int index = tablePanel.table.getSelectedRow();
+        int id = (int) tablePanel.table.getValueAt(index, 0);
+        if(bookshelfBUS.delete(id)) {
+            JOptionPane.showMessageDialog(null, "Xóa kệ sách thành công");
+        }
+        refreshTable();
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

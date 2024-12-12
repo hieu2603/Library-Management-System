@@ -249,8 +249,8 @@ public class GetBorrowedBookDialog extends javax.swing.JDialog {
     private void tbl_ticketMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_ticketMousePressed
         int row = tbl_ticket.getSelectedRow();
         int id = (int) tbl_ticket.getValueAt(row, 0);
-        detailList = BorrowTicketDetailBUS.getInstance().getByTicketID(detailList, id);
-        loadBookToTable(detailList);
+        ArrayList<BorrowTicketDetailDTO> tempDetailList = BorrowTicketDetailBUS.getInstance().getByTicketID(detailList, id);
+        loadBookToTable(tempDetailList);
     }//GEN-LAST:event_tbl_ticketMousePressed
 
 

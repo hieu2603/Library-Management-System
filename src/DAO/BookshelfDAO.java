@@ -119,4 +119,43 @@ public class BookshelfDAO {
         return result;
     }
     
+    public boolean checkDelete(int id) {
+        boolean result = false;
+        try {
+            Connection conn = Database.getConnection();
+            String checkQuery = "SELECT COUNT(*) FROM book WHERE bookshelf_id = ?";
+            PreparedStatement ps = conn.prepareStatement(checkQuery);
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next() && rs.getInt(1) == 0) {
+                result = true;
+            }
+            Database.closeConnection(conn);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+
+    public int delete(int id) {
+        int result = 0;
+        try {
+            Connection conn = Database.getConnection();
+            String deleteQuery = "DELETE FROM bookshelf WHERE bookshelf_id = ? ";
+            PreparedStatement ps = conn.prepareStatement(deleteQuery);
+
+            ps.setInt(1, id);
+            result = ps.executeUpdate();
+
+            Database.closeConnection(conn);
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+    
 }

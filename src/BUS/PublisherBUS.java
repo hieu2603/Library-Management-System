@@ -7,6 +7,7 @@ package BUS;
 import DAO.PublisherDAO;
 import DTO.PublisherDTO;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -38,6 +39,14 @@ public class PublisherBUS {
     
     public boolean update(PublisherDTO publisher) {
         return publisherDAO.update(publisher) > 0;
+    }
+    
+    public boolean delete(int id) {
+        if(!publisherDAO.checkDelete(id)) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa nhà xuất bản này");
+            return false;
+        }
+        return publisherDAO.delete(id) > 0;
     }
     
     public ArrayList<PublisherDTO> search(String text, String type) {

@@ -7,6 +7,7 @@ package config;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,8 +16,20 @@ import java.sql.DriverManager;
 public class Database {
     private static final String URL = "jdbc:mysql://localhost:3306/library_management";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "123456";
 
+    public static boolean checkConnection() {
+        Connection conn = null;
+        try {
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            return true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Không thể kết nối đến cơ sở dữ liệu!", "", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+    
     public static Connection getConnection() throws SQLException {
         Connection connection;
         connection = DriverManager.getConnection(URL, USER, PASSWORD);
